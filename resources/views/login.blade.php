@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduQuiz - Login</title>
+    <title>EDUSAFE - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="h-screen w-screen overflow-hidden m-0 p-0 font-sans">
-
    <div class="w-full h-full bg-gradient-to-tr from-[#2563eb] via-[#60a5fa] to-[#bfdbfe] flex flex-col justify-center items-center relative">
-        
-        <div class="absolute top-6 left-8 text-white/90 font-medium text-sm tracking-wide">Login</div>
-
-       <h1 class="text-white text-5xl font-bold tracking-wider mb-8 drop-shadow-md">EduQuiz</h1>
-
+       <h1 class="text-white text-5xl font-bold tracking-wider mb-8 drop-shadow-md">EduSafe</h1>
         <div class="bg-white p-8 rounded-2xl shadow-xl w-[420px]">
             <form action="{{ url('/materi') }}" method="GET">
                 
@@ -34,6 +29,7 @@
 
             <div class="flex justify-between items-center text-xs">
                 <a href="#" class="text-blue-600 hover:underline">Forgot password?</a>
+                <a href="{{ url('/materi') }}" class="text-orange-600 hover:underline">tes tombol ke materi</a>
                 <a href="{{ url('/register') }}" class="text-blue-600 hover:underline">Buat Akun</a>
             </div>
         </div>
