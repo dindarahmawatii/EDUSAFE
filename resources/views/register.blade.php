@@ -13,7 +13,7 @@
         <div class="text-blue-900 font-bold text-lg">EDUSAFE</div>
         <div class="flex items-center gap-3">
             <span class="text-xs text-gray-500">Sudah punya akun?</span>
-            <a href="{{ url('/') }}" class="px-5 py-2 text-xs font-medium border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition">Masuk</a>
+            <a href="{{ url('/login') }}" class="px-5 py-2 text-xs font-medium border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition">Masuk</a>
         </div>
     </header>
 
