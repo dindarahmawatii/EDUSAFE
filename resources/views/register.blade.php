@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduQuiz - Register</title>
+    <title>EDUSAFE- Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-[#f8fafc] flex flex-col justify-between m-0 font-sans">
 
     <!-- ini navbarnya -->
     <header class="w-full px-12 py-6 flex justify-between items-center bg-transparent">
-        <div class="absolute top-4 left-4 text-xs text-gray-400">register</div>
-        <div class="text-blue-900 font-bold text-lg">EduQuiz</div>
+        <div class="text-blue-900 font-bold text-lg">EDUSAFE</div>
         <div class="flex items-center gap-3">
             <span class="text-xs text-gray-500">Sudah punya akun?</span>
             <a href="{{ url('/') }}" class="px-5 py-2 text-xs font-medium border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition">Masuk</a>
@@ -58,13 +57,10 @@
         </div>
     </main>
 
-    <!-- ini footer bawah -->
     <footer class="w-full px-12 py-6 border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
-        <div>EduQuiz</div>
+        <div>Edusafe</div>
         <div class="flex gap-6">
-            <a href="#" class="hover:underline">Privacy Policy</a>
-            <a href="#" class="hover:underline">Terms of Service</a>
-            <a href="#" class="hover:underline">Contact Us</a>
+            <a href="#" class="hover:underline">EDUSAFE • Sistem Edukasi & Keamanan</a>
         </div>
     </footer>
 
