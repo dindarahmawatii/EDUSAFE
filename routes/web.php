@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Saat buka 127.0.0.1:8000 langsung tampilkan halaman login
 Route::get('/', function () {
-    return view('welcome');
+    return view('login');
 });
 
 // Routing untuk halaman-halaman frontend milikmu
@@ -46,4 +47,8 @@ Route::get('/rekap', function () {
 
 Route::get('/admin', function () {
     return view('admin');
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> main
