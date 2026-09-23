@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class LoginRequest extends FormRequest
 {
@@ -40,5 +41,13 @@ class LoginRequest extends FormRequest
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
         ];
+    }
+
+    /**
+     * Get the rate limiting throttle key for the request.
+     */
+    public function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
     }
 }

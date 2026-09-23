@@ -8,7 +8,9 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
@@ -42,15 +44,49 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
+        $throttleKey = $request->throttleKey();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $minutes = max(1, (int) ceil($seconds / 60));
+
+            return response()->json([
+                'message' => "Terlalu banyak percobaan login yang salah. Anda tidak dapat memasukkan password selama {$minutes} menit.",
+                'retry_after' => $seconds,
+            ], 429);
+        }
+
         $validated = $request->validated();
 
         $user = User::where('email', $validated['email'])->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
+            RateLimiter::hit($throttleKey, 15 * 60);
+
+            $attempts = RateLimiter::attempts($throttleKey);
+
+            if ($attempts >= 5) {
+                $cleanKey = RateLimiter::cleanRateLimiterKey($throttleKey);
+                Cache::put($cleanKey.':timer', now()->addMinutes(15)->getTimestamp(), 15 * 60);
+
+                $seconds = RateLimiter::availableIn($throttleKey);
+                $minutes = max(1, (int) ceil($seconds / 60));
+
+                return response()->json([
+                    'message' => "Terlalu banyak percobaan login yang salah (5 kali). Anda tidak dapat memasukkan password selama {$minutes} menit.",
+                    'retry_after' => $seconds,
+                ], 429);
+            }
+
+            $remaining = 5 - $attempts;
+
             return response()->json([
                 'message' => 'Email atau password salah.',
+                'remaining_attempts' => $remaining,
             ], 401);
         }
+
+        RateLimiter::clear($throttleKey);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
