@@ -8,7 +8,7 @@
 </head>
 <body class="min-h-screen bg-[#f8fafc] flex flex-col justify-between m-0 font-sans">
 
-    <!-- Header / Navbar Atas Register (Mockup 2) -->
+    <!-- ini navbarnya -->
     <header class="w-full px-12 py-6 flex justify-between items-center bg-transparent">
         <div class="absolute top-4 left-4 text-xs text-gray-400">register</div>
         <div class="text-blue-900 font-bold text-lg">EduQuiz</div>
@@ -18,7 +18,7 @@
         </div>
     </header>
 
-    <!-- Konten Utama Center Card -->
+    <!-- ini konten utamanya -->
     <main class="flex-grow flex justify-center items-center px-4 py-6">
         <div class="bg-white/80 backdrop-blur-md border border-blue-50 p-8 rounded-2xl shadow-sm w-[460px]">
             
@@ -58,7 +58,7 @@
         </div>
     </main>
 
-    <!-- Footer -->
+    <!-- ini footer bawah -->
     <footer class="w-full px-12 py-6 border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
         <div>EduQuiz</div>
         <div class="flex gap-6">
