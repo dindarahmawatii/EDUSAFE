@@ -6,7 +6,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 // Routing untuk halaman-halaman frontend milikmu
 Route::get('/login', function () {
     return view('login');
@@ -48,4 +47,3 @@ Route::get('/rekap', function () {
 Route::get('/admin', function () {
     return view('admin');
 });
- Stashed changes
