@@ -11,9 +11,9 @@
         <div class="logo">EDUSAFE</div>
         <div class="nav-links">
             <a href="{{ url('/admin') }}" class="active">Dashboard</a>
-            <a href="#">Mahasiswa</a>
+            <a href="{{ url('/data-pelajar') }}">Data Pelajar</a>
             <a href="{{ url('/evaluasi') }}">Evaluasi</a>
-            <a href="#">Laporan</a>
+            <a href="{{ url('/laporan') }}">Laporan</a>
         </div>
         <div class="nav-links">
             <span style="font-size: 13px; font-weight: bold; margin-right: 15px;">

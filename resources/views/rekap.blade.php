@@ -40,11 +40,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Simulasi Transisi ke Hak Akses Admin -->
-        <div style="text-align: right; margin-top: 20px;">
-            <a href="{{ url('/admin') }}" class="btn btn-outline">Simulasikan Pindah Ke Dasbor Admin &rarr;</a>
-        </div>
     </div>
 </body>
 </html>
