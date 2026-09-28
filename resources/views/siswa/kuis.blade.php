@@ -21,7 +21,7 @@
                     <a href="#" style="color: var(--primary); font-weight: bold;">&larr; Sebelumnya</a>
                     <div>
                         <button class="btn" style="background: #475569; margin-right: 10px;">Ragu-ragu</button>
-                        <a href="{{ url('/nilai') }}" class="btn">Simpan & Lanjut</a>
+                        <a href="{{ route('siswa.nilai') }}" class="btn">Simpan & Lanjut</a>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div style="background: var(--primary); color: white; padding: 10px; border-radius: 4px;">4</div>
                 <div style="background: white; border: 1px solid var(--primary); color: var(--primary); padding: 10px; border-radius: 4px;">7</div>
             </div>
-            <a href="{{ url('/nilai') }}" class="btn" style="background: #EBF3FF; color: var(--primary); width: 100%; display: block; text-align: center;">Selesai & Kumpulkan</a>
+            <a href="{{ route('siswa.nilai') }}" class="btn" style="background: #EBF3FF; color: var(--primary); width: 100%; display: block; text-align: center;">Selesai & Kumpulkan</a>
         </div>
     </div>
 </div>

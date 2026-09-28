@@ -44,7 +44,7 @@
                 <em>"Pemahaman dasar mengenai Ransomware sangat baik. Secara keseluruhan, dokumentasi jawaban kuis sangat rapi dan mudah dipahami. Tetap pertahankan kualitas belajarnya!"</em>
             </p>
             <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; border: 1px solid #BBF7D0; color: #166534;">
-                <strong> Rekomendasi Khusus:</strong> Siap untuk sertifikasi tingkat lanjut.
+                <strong>Rekomendasi Khusus:</strong> Siap untuk sertifikasi tingkat lanjut.
             </div>
         </div>
     </div>

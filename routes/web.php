@@ -2,67 +2,71 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\siswacontroller;
 
-// Praktikum Modul 4
-Route::get('/schedule', [PageController::class, 'schedule_master']);
-Route::get('/materi-modul4', [PageController::class, 'materi']);
+/*
+|--------------------------------------------------------------------------
+| Web Routes - EDUSAFE
+|--------------------------------------------------------------------------
+*/
 
-// Landing
+// ------------------------------
+// 1. Landing & Praktikum
+// ------------------------------
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
-// Auth
+Route::get('/schedule', [PageController::class, 'schedule_master'])->name('schedule');
+Route::get('/materi-modul4', [PageController::class, 'materi'])->name('materi.modul4');
+
+
+// ------------------------------
+// 2. Authentication
+// ------------------------------
 Route::get('/login', function () {
     return view('auth.login');
-});
+})->name('login');
 
 Route::get('/login-admin', function () {
     return view('auth.login-admin');
-});
+})->name('login.admin');
 
 Route::get('/register', function () {
     return view('auth.register');
-});
+})->name('register');
 
-// Siswa
-Route::get('/materi', function () {
-    return view('siswa.materi');
-});
+Route::post('/logout', [siswacontroller::class, 'logout'])->name('siswa.logout');
 
-Route::get('/baca-materi', function () {
-    return view('siswa.baca-materi');
-});
 
-Route::get('/kuis', function () {
-    return view('siswa.kuis');
-});
+// ------------------------------
+// 3. Modul Siswa (siswacontroller)
+// ------------------------------
+Route::get('/materi', [siswacontroller::class, 'materi'])->name('siswa.materi');
+Route::get('/baca-materi/{id?}', [siswacontroller::class, 'bacaMateri'])->name('siswa.baca-materi');
 
-Route::get('/nilai', function () {
-    return view('siswa.nilai');
-});
+Route::get('/kuis/{id?}', [siswacontroller::class, 'kuis'])->name('siswa.kuis');
+Route::post('/kuis/submit', [siswacontroller::class, 'submitKuis'])->name('siswa.kuis.submit');
 
-Route::get('/evaluasi-siswa', function () {
-    return view('siswa.evaluasi-siswa');
-});
+Route::get('/nilai', [siswacontroller::class, 'nilai'])->name('siswa.nilai');
+Route::get('/evaluasi-siswa', [siswacontroller::class, 'evaluasiSiswa'])->name('siswa.evaluasi-siswa');
+Route::get('/rekap', [siswacontroller::class, 'rekap'])->name('siswa.rekap');
 
-Route::get('/rekap', function () {
-    return view('siswa.rekap');
-});
-
-// Admin
+// ------------------------------
+// 4. Modul Admin
+// ------------------------------
 Route::get('/admin', function () {
     return view('admin.dashboard');
-});
+})->name('admin.dashboard');
 
 Route::get('/data-pelajar', function () {
     return view('admin.data-pelajar');
-});
+})->name('admin.data-pelajar');
 
 Route::get('/evaluasi', function () {
     return view('admin.evaluasi');
-});
+})->name('admin.evaluasi');
 
 Route::get('/laporan', function () {
     return view('admin.laporan');
-});
+})->name('admin.laporan');
