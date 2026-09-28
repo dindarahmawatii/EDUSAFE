@@ -1,62 +1,68 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PageController;
 
-// Saat buka 127.0.0.1:8000 langsung tampilkan halaman login
+// Praktikum Modul 4
+Route::get('/schedule', [PageController::class, 'schedule_master']);
+Route::get('/materi-modul4', [PageController::class, 'materi']);
+
+// Landing
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Routing untuk halaman-halaman frontend milikmu
+// Auth
 Route::get('/login', function () {
-    return view('login');
+    return view('auth.login');
 });
 
 Route::get('/login-admin', function () {
-    return view('login-admin');
+    return view('auth.login-admin');
 });
 
-// Tambahkan route register di sini agar tidak error 404
 Route::get('/register', function () {
-    return view('register');
+    return view('auth.register');
 });
 
+// Siswa
 Route::get('/materi', function () {
-    return view('materi');
+    return view('siswa.materi');
 });
 
 Route::get('/baca-materi', function () {
-    return view('baca-materi');
+    return view('siswa.baca-materi');
 });
 
 Route::get('/kuis', function () {
-    return view('kuis');
+    return view('siswa.kuis');
 });
 
 Route::get('/nilai', function () {
-    return view('nilai');
-});
-
-Route::get('/evaluasi', function () {
-    return view('evaluasi');
+    return view('siswa.nilai');
 });
 
 Route::get('/evaluasi-siswa', function () {
-    return view('evaluasi-siswa');
+    return view('siswa.evaluasi-siswa');
 });
 
 Route::get('/rekap', function () {
-    return view('rekap');
+    return view('siswa.rekap');
 });
 
+// Admin
 Route::get('/admin', function () {
-    return view('admin');
+    return view('admin.dashboard');
 });
 
 Route::get('/data-pelajar', function () {
-    return view('data-pelajar');
+    return view('admin.data-pelajar');
+});
+
+Route::get('/evaluasi', function () {
+    return view('admin.evaluasi');
 });
 
 Route::get('/laporan', function () {
-    return view('laporan');
+    return view('admin.laporan');
 });

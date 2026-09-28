@@ -45,11 +45,6 @@
                     <input type="password" placeholder="Ulangi password" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-xs text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
 
-                <div class="flex items-center gap-2 mb-6 text-xs text-gray-600">
-                    <input type="checkbox" id="syarat" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" required>
-                    <label for="syarat">Saya setuju dengan Syarat & Ketentuan yang berlaku.</label>
-                </div>
-
                 <button type="submit" class="w-full bg-[#001d6c] text-white py-3 rounded-xl text-xs font-medium hover:bg-blue-900 transition flex items-center justify-center gap-2 shadow-md">
                     Daftar Sekarang &rarr;
                 </button>
