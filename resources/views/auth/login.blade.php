@@ -41,7 +41,7 @@
                     <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
                         <input type="checkbox" id="remember"> Ingat Saya
                     </label>
-                    <a href="#" style="color: var(--primary); text-decoration: none;">Lupa Password?</a>
+                    <a href="{{ url('/lupa-password') }}" style="color: var(--primary); text-decoration: none;">Lupa Password?</a>
                 </div>
 
                 <button type="submit" class="btn" style="width: 100%; padding: 12px; font-weight: bold;">Masuk Pembelajaran &rarr;</button>

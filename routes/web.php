@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\siswacontroller;
+use App\Http\Controllers\admincontroller;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +38,10 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
+Route::get('/lupa-password', function () {
+    return view('auth.lupa-password');
+});
+
 Route::post('/logout', [siswacontroller::class, 'logout'])->name('siswa.logout');
 
 
@@ -43,7 +49,7 @@ Route::post('/logout', [siswacontroller::class, 'logout'])->name('siswa.logout')
 // 3. Modul Siswa (siswacontroller)
 // ------------------------------
 Route::get('/materi', [siswacontroller::class, 'materi'])->name('siswa.materi');
-Route::get('/baca-materi/{id?}', [siswacontroller::class, 'bacaMateri'])->name('siswa.baca-materi');
+Route::get('/siswa/materi/{id}', [siswacontroller::class, 'bacaMateri'])->name('siswa.baca-materi');
 
 Route::get('/kuis/{id?}', [siswacontroller::class, 'kuis'])->name('siswa.kuis');
 Route::post('/kuis/submit', [siswacontroller::class, 'submitKuis'])->name('siswa.kuis.submit');
@@ -70,3 +76,7 @@ Route::get('/evaluasi', function () {
 Route::get('/laporan', function () {
     return view('admin.laporan');
 })->name('admin.laporan');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
+});

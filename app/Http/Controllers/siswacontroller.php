@@ -7,91 +7,103 @@ use Illuminate\Support\Facades\Auth;
 
 class siswacontroller extends Controller
 {
-    // 1. Halaman Utama Daftar Semua Materi
+    // 1. Daftar 9 Modul Utama
+    // PESAN BACKEND: Nanti tinggal tarik dari DB: $materiList = \App\Models\Materi::all();
     public function materi()
     {
         $materiList = [
             [
                 'id' => 1,
                 'modul' => 'Modul 01',
-                'judul' => 'Pengenalan Malware',
-                'deskripsi' => 'Memahami dasar-dasar perangkat lunak berbahaya, sejarah perkembangannya, dan ancaman digital.',
+                'judul' => 'Pengenalan Malware & Ancaman Siber',
+                'deskripsi' => 'Memahami konsep dasar perangkat lunak berbahaya, evolusi ancaman siber dari masa ke masa, serta dampak fatal infeksi malware pada infrastruktur organisasi.',
                 'durasi' => '15 Menit',
+                'file_pdf' => 'modul-01-pengenalan-malware.pdf', // Placeholder PDF untuk Admin
             ],
             [
                 'id' => 2,
                 'modul' => 'Modul 02',
-                'judul' => 'Jenis-jenis Malware',
-                'deskripsi' => 'Identifikasi perbedaan antara Virus, Worm, Trojan, Ransomware, dan Spyware.',
+                'judul' => 'Klasifikasi & Taksonomi Jenis Malware',
+                'deskripsi' => 'Menganalisis secara mendalam karakteristik unik dari Virus, Worm, Trojan, Ransomware, Spyware, Rootkit, hingga fileless malware modern.',
                 'durasi' => '25 Menit',
+                'file_pdf' => 'modul-02-jenis-malware.pdf',
             ],
             [
                 'id' => 3,
                 'modul' => 'Modul 03',
-                'judul' => 'Mekanisme Infeksi',
-                'deskripsi' => 'Mempelajari jalur distribusi malware melalui email phishing dan kerentanan operasi.',
+                'judul' => 'Vektor Serangan & Mekanisme Infeksi',
+                'deskripsi' => 'Mempelajari bagaimana malware masuk ke dalam sistem melalui Social Engineering, Phishing, Drive-by Downloads, serta eksploitasi kerentanan zero-day.',
                 'durasi' => '20 Menit',
+                'file_pdf' => 'modul-03-mekanisme-infeksi.pdf',
+            ],
+            [
+                'id' => 4,
+                'modul' => 'Modul 04',
+                'judul' => 'Landasan Analisis Statis Malware',
+                'deskripsi' => 'Teknik membedah sampel malware tanpa menjalankannya. Meliputi verifikasi file hash (MD5/SHA256), ekstraksi printable strings, dan analisis PE Header.',
+                'durasi' => '30 Menit',
+                'file_pdf' => 'modul-04-analisis-statis.pdf',
+            ],
+            [
+                'id' => 5,
+                'modul' => 'Modul 05',
+                'judul' => 'Analisis Dinamis & Perilaku Sandbox',
+                'deskripsi' => 'Mengamati perilaku langsung malware saat dieksekusi di lingkungan terisolasi (Sandbox). Meliputi monitoring registry, sistem file, dan traffic jaringan.',
+                'durasi' => '35 Menit',
+                'file_pdf' => 'modul-05-analisis-dinamis.pdf',
+            ],
+            [
+                'id' => 6,
+                'modul' => 'Modul 06',
+                'judul' => 'Teknologi Deteksi & Sistem Antivirus',
+                'deskripsi' => 'Memahami cara kerja mesin pemindai antivirus, perbedaan teknik Signature-Based Matching dengan Heuristic Analysis, serta pencegahan EDR.',
+                'durasi' => '25 Menit',
+                'file_pdf' => 'modul-06-deteksi-antivirus.pdf',
+            ],
+            [
+                'id' => 7,
+                'modul' => 'Modul 07',
+                'judul' => 'Penanganan & Response Serangan Ransomware',
+                'deskripsi' => 'SOP penanganan insiden darurat saat terinfeksi ransomware: isolasi jaringan cepat, ekstraksi kunci enkripsi (jika memungkinkan), dan pemulihan backup.',
+                'durasi' => '40 Menit',
+                'file_pdf' => 'modul-07-penanganan-ransomware.pdf',
+            ],
+            [
+                'id' => 8,
+                'modul' => 'Modul 08',
+                'judul' => 'Konsep Dasar Reverse Engineering',
+                'deskripsi' => 'Pengenalan alat decompiler dan disassembler (Ghidra & IDA Pro) untuk menguraikan kode biner executable menjadi instruksi Assembly yang dapat dibaca.',
+                'durasi' => '45 Menit',
+                'file_pdf' => 'modul-08-reverse-engineering.pdf',
+            ],
+            [
+                'id' => 9,
+                'modul' => 'Modul 09',
+                'judul' => 'Best Practices & Defense in Depth',
+                'deskripsi' => 'Strategi keamanan siber komprehensif: penerapan arsitektur Defense in Depth, manajemen patch teratur, hardening OS, dan edukasi pengguna.',
+                'durasi' => '20 Menit',
+                'file_pdf' => 'modul-09-best-practices.pdf',
             ],
         ];
 
         return view('siswa.materi', compact('materiList'));
     }
 
-    // 2. Halaman Baca Detail Materi Berdasarkan ID
+    // 2. Detail Baca Materi + Fitur PDF Reader
     public function bacaMateri($id = 1)
     {
+        // PESAN BACKEND: $materi = \App\Models\Materi::findOrFail($id);
         $dataMateri = [
             1 => [
                 'id' => 1,
                 'modul' => 'Modul 01',
-                'judul' => 'Pengenalan Malware Analysis',
+                'judul' => 'Pengenalan Malware & Ancaman Siber',
                 'estimasi' => '15 Menit',
-                'kategori' => 'Cybersecurity',
-                'isi' => [
-                    [
-                        'subjudul' => 'Apa itu Malware?',
-                        'konten' => 'Malware (Malicious Software) adalah suatu perangkat lunak yang dirancang khusus dengan tujuan untuk merusak, menyusup, atau meretas sistem komputer, server, atau jaringan tanpa persetujuan dari pemiliknya.'
-                    ],
-                    [
-                        'subjudul' => 'Mengapa Malware Berbahaya?',
-                        'konten' => 'Malware dapat mencuri data sensitif pengguna (seperti kata sandi dan informasi perbankan), mengenkripsi file penting untuk meminta tebusan finansial (seperti Ransomware), atau secara diam-diam menyerang jaringan lain.'
-                    ]
-                ]
+                'kategori' => 'Cybersecurity Fundamentals',
+                'file_pdf' => 'sample-materi.pdf', // Nama file PDF yang di-upload admin
+                'isi_teks' => 'Malware (Malicious Software) merupakan istilah umum untuk program komputer jahat yang dibuat dengan niat merusak...',
             ],
-            2 => [
-                'id' => 2,
-                'modul' => 'Modul 02',
-                'judul' => 'Jenis-jenis Malware',
-                'estimasi' => '25 Menit',
-                'kategori' => 'Malware Taxonomy',
-                'isi' => [
-                    [
-                        'subjudul' => '1. Virus & Worm',
-                        'konten' => 'Virus menggandakan diri dengan menempel pada program lain, sedangkan Worm menyebar mandiri melalui jaringan tanpa bantuan file induk.'
-                    ],
-                    [
-                        'subjudul' => '2. Trojan & Ransomware',
-                        'konten' => 'Trojan menyamar sebagai aplikasi biasa, sementara Ransomware mengenkripsi file penting untuk meminta tebusan finansial.'
-                    ]
-                ]
-            ],
-            3 => [
-                'id' => 3,
-                'modul' => 'Modul 03',
-                'judul' => 'Mekanisme Infeksi Malware',
-                'estimasi' => '20 Menit',
-                'kategori' => 'Cyber Attack Vectors',
-                'isi' => [
-                    [
-                        'subjudul' => 'Email Phishing',
-                        'konten' => 'Metode paling umum dengan mengirimkan lampiran atau link berbahaya melalui email yang menyamar sebagai pihak terpercaya.'
-                    ],
-                    [
-                        'subjudul' => 'Drive-by Download',
-                        'konten' => 'Malware terunduh secara otomatis ke sistem pengguna hanya dengan mengklik atau mengunjungi situs web yang terinfeksi.'
-                    ]
-                ]
-            ],
+            // ... Modul 2 - 9 menyesuaikan
         ];
 
         $materi = $dataMateri[$id] ?? $dataMateri[1];
@@ -99,60 +111,32 @@ class siswacontroller extends Controller
         return view('siswa.baca-materi', compact('materi'));
     }
 
-    // 3. Halaman Kuis Siswa
     public function kuis($id = null)
     {
-        return view('siswa.kuis', compact('id'));
+        $materiId = $id ?? 1;
+        return view('siswa.kuis', compact('materiId'));
     }
 
-    // 4. Proses Submit Kuis
     public function submitKuis(Request $request)
     {
         return redirect()->route('siswa.nilai')->with('success', 'Kuis berhasil diselesaikan!');
     }
 
-    // 5. Halaman Ringkasan Nilai & Pencapaian
     public function nilai()
     {
-        // Menggunakan Auth::id() agar aman dari warning linter Intelephense
-        $siswaId = Auth::id() ?? 1; 
-
-        $kuisTerakhir = class_exists('\App\Models\HasilKuis') 
-            ? \App\Models\HasilKuis::where('user_id', $siswaId)->latest()->first() 
-            : null;
-
-        $rataRataNilai = class_exists('\App\Models\HasilKuis') 
-            ? \App\Models\HasilKuis::where('user_id', $siswaId)->avg('skor') 
-            : 88.5;
-
-        $materiSelesai = class_exists('\App\Models\ProgressMateri') 
-            ? \App\Models\ProgressMateri::where('user_id', $siswaId)->where('is_selesai', true)->count() 
-            : 12;
-
-        return view('siswa.nilai', compact('kuisTerakhir', 'rataRataNilai', 'materiSelesai'));
+        return view('siswa.nilai');
     }
-
-    // 6. Halaman Evaluasi Performa Siswa
     public function evaluasiSiswa()
     {
         return view('siswa.evaluasi-siswa');
     }
-
-    // 7. Halaman Rekap/Review Jawaban Kuis
-    public function rekap()
-    {
-        return view('siswa.rekap');
-    }
-
-    // 8. Fungsi Logout Siswa
     public function logout(Request $request)
     {
-        if (Auth::check()) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-        }
+        Auth::logout();
 
-        return redirect()->route('login')->with('success', 'Berhasil keluar dari sistem.');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login'); // Arahkan kembali ke halaman login
     }
 }
