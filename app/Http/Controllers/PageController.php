@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class PageController extends Controller
 {
     public function schedule_master()
@@ -18,5 +16,10 @@ class PageController extends Controller
         $content = view('schedule', compact('jadwalBus'))->render();
 
         return view('layouts.master', compact('title', 'content'));
+    }
+
+    public function materi()
+    {
+        return view('siswa.materi-modul4');
     }
 }

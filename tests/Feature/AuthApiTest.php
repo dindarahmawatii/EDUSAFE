@@ -165,7 +165,7 @@ class AuthApiTest extends TestCase
         $this->assertDatabaseCount('personal_access_tokens', 0);
     }
 
-    public function test_user_is_locked_out_for_15_minutes_after_5_failed_attempts(): void
+    public function test_user_is_locked_out_for_1_minute_after_5_failed_attempts(): void
     {
         User::factory()->create([
             'email' => 'lockout@example.com',
@@ -191,10 +191,10 @@ class AuthApiTest extends TestCase
         $response5 = $this->postJson('/api/login', $wrongPayload);
         $response5->assertStatus(429)
             ->assertJsonStructure(['message', 'retry_after'])
-            ->assertJsonPath('message', 'Terlalu banyak percobaan login yang salah (5 kali). Anda tidak dapat memasukkan password selama 15 menit.');
+            ->assertJsonPath('message', 'Terlalu banyak percobaan login yang salah (5 kali). Anda tidak dapat memasukkan password selama 1 menit.');
 
-        $this->assertGreaterThanOrEqual(890, $response5->json('retry_after'));
-        $this->assertLessThanOrEqual(900, $response5->json('retry_after'));
+        $this->assertGreaterThanOrEqual(50, $response5->json('retry_after'));
+        $this->assertLessThanOrEqual(60, $response5->json('retry_after'));
 
         // 6th attempt (even with the correct password) must still be blocked with 429
         $correctPayload = [
@@ -205,7 +205,7 @@ class AuthApiTest extends TestCase
         $response6 = $this->postJson('/api/login', $correctPayload);
         $response6->assertStatus(429)
             ->assertJsonStructure(['message', 'retry_after'])
-            ->assertJsonPath('message', 'Terlalu banyak percobaan login yang salah. Anda tidak dapat memasukkan password selama 15 menit.');
+            ->assertJsonPath('message', 'Terlalu banyak percobaan login yang salah. Anda tidak dapat memasukkan password selama 1 menit.');
     }
 
     public function test_successful_login_clears_failed_attempt_counter(): void

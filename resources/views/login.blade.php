@@ -14,7 +14,24 @@
             {{-- Kotak pesan error / lockout --}}
             <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-xs border leading-relaxed"></div>
 
-            <form id="login-form">
+            @if (session('success'))
+                <div class="mb-4 p-3 rounded-lg text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 leading-relaxed">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="mb-4 p-3 rounded-lg text-xs bg-red-50 text-red-700 border border-red-200 leading-relaxed">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form id="login-form" action="{{ route('login.post') }}" method="POST">
+                @csrf
                 <div class="mb-5">
                     <label for="email" class="block text-gray-700 text-xs font-semibold mb-2">Email</label>
                     <input type="email" id="email" name="email" placeholder="Isi email"
@@ -169,7 +186,7 @@
 
                 } else if (res.status === 429) {
                     /* 🔒 Terlalu banyak percobaan */
-                    const retryAfter = data.retry_after !== undefined ? data.retry_after : 900;
+                    const retryAfter = data.retry_after !== undefined ? data.retry_after : 60;
                     const until      = Date.now() + retryAfter * 1000;
                     localStorage.setItem('edusafe_lockout_until', until);
                     startLockout(until);

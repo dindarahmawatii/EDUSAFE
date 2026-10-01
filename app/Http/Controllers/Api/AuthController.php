@@ -9,8 +9,10 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Schema;
 
 class AuthController extends Controller
 {
@@ -26,6 +28,21 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
+
+        if (Schema::hasTable('user')) {
+            try {
+                DB::table('user')->updateOrInsert(
+                    ['email' => $user->email],
+                    [
+                        'username' => $user->name,
+                        'password' => $user->password,
+                        'role' => 'user',
+                    ]
+                );
+            } catch (\Throwable $e) {
+                // Ignore sync failures to prevent blocking registration
+            }
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -61,13 +78,13 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
-            RateLimiter::hit($throttleKey, 15 * 60);
+            RateLimiter::hit($throttleKey, 60);
 
             $attempts = RateLimiter::attempts($throttleKey);
 
             if ($attempts >= 5) {
                 $cleanKey = RateLimiter::cleanRateLimiterKey($throttleKey);
-                Cache::put($cleanKey.':timer', now()->addMinutes(15)->getTimestamp(), 15 * 60);
+                Cache::put($cleanKey.':timer', now()->addMinutes(1)->getTimestamp(), 60);
 
                 $seconds = RateLimiter::availableIn($throttleKey);
                 $minutes = max(1, (int) ceil($seconds / 60));
