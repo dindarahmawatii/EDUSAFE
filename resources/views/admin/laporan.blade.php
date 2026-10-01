@@ -9,7 +9,7 @@
             <h1 style="color: var(--primary); margin-bottom: 5px;">Laporan Rekapitulasi Edukasi</h1>
             <p style="color: var(--text-muted);">Unduh dan tinjau performa statistik kegiatan kuis serta tingkat pemahaman siswa.</p>
         </div>
-        <button class="btn" style="background: #10B981;">📥 Ekspor Laporan (PDF/Excel)</button>
+        <button class="btn" style="background: #10B981;"> Ekspor Laporan (PDF/Excel)</button>
     </div>
 
     <!-- Metric Cards -->

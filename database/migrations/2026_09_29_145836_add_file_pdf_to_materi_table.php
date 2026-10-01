@@ -11,7 +11,7 @@ return new class extends Migration
      */
         public function up()
         {
-            Schema::table('materis', function (Blueprint $table) {
+            Schema::table('materi', function (Blueprint $table) {
                 $table->string('file_pdf')->nullable()->after('deskripsi');
             });
         }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
         public function down()
         {
-            Schema::table('materis', function (Blueprint $table) {
+            Schema::table('materi', function (Blueprint $table) {
                 $table->dropColumn('file_pdf');
             });
         }
