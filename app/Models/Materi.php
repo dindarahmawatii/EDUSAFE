@@ -16,7 +16,6 @@ class Materi extends Model
         'judul',
         'kategori',
         'deskripsi',
-        'durasi',
         'file_pdf',
         'isi_teks',
     ];

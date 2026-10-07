@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\materi;
-use Illuminate\Support\Str;
+use Illuminate\Support\Str;      
 
 class admincontroller extends Controller
 {
