@@ -1,10 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
+<<<<<<< HEAD
 use App\Http\Controllers\siswacontroller;
 use App\Http\Controllers\admincontroller;
 use App\Http\Controllers\AuthController;
+=======
+use Illuminate\Support\Facades\Route;
+>>>>>>> origin/API
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +16,7 @@ use App\Http\Controllers\AuthController;
 |--------------------------------------------------------------------------
 */
 
+<<<<<<< HEAD
 // ------------------------------
 // 1. Landing & Praktikum
 // ------------------------------
@@ -29,10 +34,18 @@ Route::get('/materi-modul4', [PageController::class, 'materi'])->name('materi.mo
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
+=======
+// Landing
+Route::get('/', [AuthController::class, 'showLogin']);
+>>>>>>> origin/API
 
+// Auth Routes (Web)
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/login-admin', function () {
     return view('auth.login-admin');
 })->name('login.admin');
+<<<<<<< HEAD
 
 Route::get('/register', function () {
     return view('auth.register');
@@ -43,6 +56,16 @@ Route::get('/lupa-password', function () {
 });
 
 Route::post('/logout', [siswacontroller::class, 'logout'])->name('siswa.logout');
+=======
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Siswa
+Route::get('/materi', function () {
+    return view('siswa.materi');
+})->name('materi');
+>>>>>>> origin/API
 
 
 // ------------------------------
@@ -75,8 +98,12 @@ Route::get('/evaluasi', function () {
 
 Route::get('/laporan', function () {
     return view('admin.laporan');
+<<<<<<< HEAD
 })->name('admin.laporan');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
 });
+=======
+});
+>>>>>>> origin/API
