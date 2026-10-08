@@ -114,6 +114,7 @@ class siswacontroller extends Controller
     public function kuis($id = null)
     {
         $materiId = $id ?? 1;
+
         return view('siswa.kuis', compact('materiId'));
     }
 
@@ -126,10 +127,17 @@ class siswacontroller extends Controller
     {
         return view('siswa.nilai');
     }
+
     public function evaluasiSiswa()
     {
         return view('siswa.evaluasi-siswa');
     }
+
+    public function rekap()
+    {
+        return view('siswa.rekap');
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

@@ -9,20 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-        public function up()
-        {
-            Schema::table('materis', function (Blueprint $table) {
-                $table->string('file_pdf')->nullable()->after('deskripsi');
-            });
-        }
+    public function up()
+    {
+        $table = Schema::hasTable('materis') ? 'materis' : 'materi';
+        Schema::table($table, function (Blueprint $table) {
+            $table->string('file_pdf')->nullable()->after('deskripsi');
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
-        public function down()
-        {
-            Schema::table('materis', function (Blueprint $table) {
-                $table->dropColumn('file_pdf');
-            });
-        }
+    public function down()
+    {
+        $table = Schema::hasTable('materis') ? 'materis' : 'materi';
+        Schema::table($table, function (Blueprint $table) {
+            $table->dropColumn('file_pdf');
+        });
+    }
 };

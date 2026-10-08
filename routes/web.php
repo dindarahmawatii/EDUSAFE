@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\admincontroller;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\siswacontroller;
-use App\Http\Controllers\admincontroller;
-use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,28 +22,24 @@ Route::get('/', function () {
 Route::get('/schedule', [PageController::class, 'schedule_master'])->name('schedule');
 Route::get('/materi-modul4', [PageController::class, 'materi'])->name('materi.modul4');
 
-
 // ------------------------------
 // 2. Authentication
 // ------------------------------
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
 Route::get('/login-admin', function () {
     return view('auth.login-admin');
 })->name('login.admin');
 
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
 Route::get('/lupa-password', function () {
     return view('auth.lupa-password');
 });
 
-Route::post('/logout', [siswacontroller::class, 'logout'])->name('siswa.logout');
-
+Route::post('/logout', [AuthController::class, 'logout'])->name('siswa.logout');
 
 // ------------------------------
 // 3. Modul Siswa (siswacontroller)
@@ -78,5 +74,5 @@ Route::get('/laporan', function () {
 })->name('admin.laporan');
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
+    Route::post('/materi/store', [admincontroller::class, 'storeMateri'])->name('materi.store');
 });
