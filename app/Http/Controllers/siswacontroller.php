@@ -128,7 +128,11 @@ class siswacontroller extends Controller
     }
     public function evaluasiSiswa()
     {
-        return view('siswa.evaluasi-siswa');
+        return view('siswa.evaluasi');
+    }
+    public function rekap()
+    {
+        return view('siswa.rekap');
     }
     public function logout(Request $request)
     {

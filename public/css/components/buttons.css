@@ -1,0 +1,80 @@
+/* ==========================================================================
+   public/css/components/buttons.css
+   ========================================================================== */
+.btn {
+    display: inline-block;
+    padding: 9px 22px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Kategori Warna Tombol Sesuai DPPL */
+.btn-sky {
+    background: var(--sky);
+    color: var(--white);
+    border-color: transparent;
+}
+.btn-sky:hover {
+    background: #33a9f0;
+}
+
+.btn-blue {
+    background: var(--blue);
+    color: var(--white);
+}
+.btn-blue:hover {
+    background: var(--primary);
+}
+
+.btn-dark {
+    background: var(--dark);
+    color: var(--white);
+}
+.btn-dark:hover {
+    background: var(--dark-hover);
+}
+
+.btn-light {
+    background: #E2E3E5;
+    color: var(--text-dark);
+    border-color: #CBD5E1;
+}
+.btn-light:hover {
+    background: #D4D6D9;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dark);
+}
+.btn-outline:hover {
+    background: var(--bg-light);
+}
+/* ==========================================================================
+   TAMBAHKAN ke public/css/components/buttons.css
+   (varian tombol yang tadinya ditulis di dalam auth.css)
+   ========================================================================== */
+.btn-block { width: 100%; padding: 12px; font-size: 15px; }
+
+.btn-dark {
+    background-color: var(--dark);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .2s ease;
+}
+.btn-dark:hover { background-color: var(--dark-hover); }
+.btn:disabled   { opacity: .6; cursor: not-allowed; }

@@ -1,6 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.siswa')
 
-@section('title', 'EDUSAFE - Nilai & Pencapaian')
+@section('title', 'EDUSAFE - Ringkasan Nilai & Pencapaian')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/pages/siswa/nilai.css') }}?v={{ time() }}">
+@endpush
 
 @section('content')
 @php
@@ -9,51 +13,140 @@
     $rataNilaiVal = $rataRataNilai ?? 88.5;
 @endphp
 
-<div class="container" style="padding: 30px 0;">
-    <div style="margin-bottom: 30px;">
-        <h1 style="color: var(--text-dark); margin-bottom: 5px;">Ringkasan Nilai & Pencapaian</h1>
-        <p style="color: var(--text-muted);">Pantau kemajuan belajar Anda dan akses hasil evaluasi kuis.</p>
-    </div>
-    
-    <div class="grid grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+<div class="nilai-page-wrapper">
+    <div class="nilai-container">
         
-        <!-- Card Kuis Terakhir -->
-        <div class="card" style="background: #EBF3FF; border: none; padding: 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <div class="badge" style="background: #C6DBFF; color: var(--primary); padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 10px;">Quiz Terakhir</div>
-                <h3 style="margin-bottom: 5px; color: var(--primary);">
-                    {{ isset($kuisTerakhir) && $kuisTerakhir ? $kuisTerakhir->nama_modul : 'Malware Analysis Fundamentals' }}
-                </h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-                    Diselesaikan dengan baik
-                </p>
-                <a href="{{ route('siswa.rekap') }}" class="btn" style="background: var(--primary); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px;">Review Jawaban</a>
-            </div>
-            
-            <!-- Lingkaran Skor -->
-            <div style="width: 100px; height: 100px; border-radius: 50%; border: 8px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; color: var(--primary); background: white;">
-                {{ isset($kuisTerakhir) && $kuisTerakhir ? $kuisTerakhir->skor : 90 }}
-            </div>
+        <!-- Header Halaman -->
+        <div class="nilai-header">
+            <h1 class="nilai-main-title">Ringkasan Nilai & Pencapaian</h1>
+            <p class="nilai-main-desc">Pantau kemajuan belajar Anda dan akses sertifikat resmi.</p>
         </div>
 
-        <!-- Card Kemajuan Kursus -->
-        <div class="card" style="background: #EBF3FF; border: none; padding: 25px; border-radius: 12px;">
-            <h3 style="margin-bottom: 15px; color: var(--text-dark);">Kemajuan Kursus</h3>
+        <!-- Grid Top Cards (Quiz Terakhir & Kemajuan Kursus) -->
+        <div class="top-cards-grid">
             
-            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
-                <span>Materi Selesai</span>
-                <span style="font-weight: bold;">{{ $materiVal }}/15</span>
-            </div>
-            <div style="background: #C6DBFF; height: 8px; border-radius: 4px; margin-bottom: 15px; overflow: hidden;">
-                <div style="background: var(--primary); width: {{ $persenMateri }}%; height: 100%; border-radius: 4px;"></div>
+            <!-- Card Quiz Terakhir -->
+            <div class="card-quiz-terakhir">
+                <div class="quiz-info-left">
+                    <span class="badge-quiz">Quiz Terakhir</span>
+                    <h2 class="quiz-title">
+                        {{ isset($kuisTerakhir) && $kuisTerakhir ? $kuisTerakhir->nama_modul : 'Malware Analysis Fundamentals' }}
+                    </h2>
+                    <p class="quiz-date">Diselesaikan pada 24 Okt 2026</p>
+                    <a href="{{ route('siswa.rekap') }}" class="btn-review">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        Review Jawaban
+                    </a>
+                </div>
+
+                <div class="score-circle-wrapper">
+                    <div class="score-circle">
+                        <span class="score-number">{{ isset($kuisTerakhir) && $kuisTerakhir ? $kuisTerakhir->skor : 90 }}</span>
+                        <span class="score-label">Skor Akhir</span>
+                    </div>
+                </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
-                <span>Rata-rata Nilai</span>
-                <span style="font-weight: bold;">{{ number_format($rataNilaiVal, 1) }}</span>
+            <!-- Card Kemajuan Kursus -->
+            <div class="card-kemajuan">
+                <h3 class="kemajuan-title">Kemajuan Kursus</h3>
+                
+                <div class="progress-group">
+                    <div class="progress-labels">
+                        <span>Materi Selesai</span>
+                        <strong>{{ $materiVal }}/15</strong>
+                    </div>
+                    <div class="progress-group">
+                        <div class="progress-labels">
+                            <span>Materi Selesai</span>
+                            <strong>{{ $materiVal }}/15</strong>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="--w: {{ $persenMateri }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-group">
+                        <div class="progress-labels">
+                            <span>Rata-rata Nilai</span>
+                            <strong>{{ number_format($rataNilaiVal, 1) }}</strong>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="--w: {{ $rataNilaiVal }}%;"></div>
+                        </div>
+                    </div>
+
+                <p class="kemajuan-note">
+                    "Tinggal {{ 15 - $materiVal }} modul lagi untuk mendapatkan sertifikat profesional!"
+                </p>
             </div>
-            <div style="background: #C6DBFF; height: 8px; border-radius: 4px; overflow: hidden;">
-                <div style="background: var(--primary); width: {{ $rataNilaiVal }}%; height: 100%; border-radius: 4px;"></div>
+
+        </div>
+
+        <!-- Section Detail Nilai per Modul -->
+        <div class="detail-nilai-section">
+            <div class="detail-header">
+                <h2>Detail Nilai per Modul</h2>
+                <div class="detail-actions">
+                    <button class="btn-icon" title="Filter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></button>
+                    <button class="btn-icon" title="Unduh Laporan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+                </div>
+            </div>
+
+            <!-- List Nilai Modul -->
+            <div class="modul-nilai-list">
+                
+                <div class="modul-nilai-item">
+                    <div class="item-left">
+                        <div class="item-icon">⚙️</div>
+                        <div>
+                            <h4 class="item-modul-title">Pengantar Malware Analysis</h4>
+                            <span class="item-modul-sub">Modul 1 • 12 Pertanyaan</span>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <div class="score-info">
+                            <span class="item-score">95/100</span>
+                            <span class="item-status status-sangat-baik">Sangat Baik</span>
+                        </div>
+                        <span class="item-arrow">&rsaquo;</span>
+                    </div>
+                </div>
+
+                <div class="modul-nilai-item">
+                    <div class="item-left">
+                        <div class="item-icon">&lt;&gt;</div>
+                        <div>
+                            <h4 class="item-modul-title">Static Analysis Techniques</h4>
+                            <span class="item-modul-sub">Modul 2 • 15 Pertanyaan</span>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <div class="score-info">
+                            <span class="item-score">82/100</span>
+                            <span class="item-status status-lulus">Lulus</span>
+                        </div>
+                        <span class="item-arrow">&rsaquo;</span>
+                    </div>
+                </div>
+
+                <div class="modul-nilai-item">
+                    <div class="item-left">
+                        <div class="item-icon">📊</div>
+                        <div>
+                            <h4 class="item-modul-title">Behavioral Analysis</h4>
+                            <span class="item-modul-sub">Modul 3 • 20 Pertanyaan</span>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <div class="score-info">
+                            <span class="item-score">90/100</span>
+                            <span class="item-status status-sangat-baik">Sangat Baik</span>
+                        </div>
+                        <span class="item-arrow">&rsaquo;</span>
+                    </div>
+                </div>
+
             </div>
         </div>
 

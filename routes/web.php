@@ -1,14 +1,9 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PageController;
-<<<<<<< HEAD
-use App\Http\Controllers\siswacontroller;
-use App\Http\Controllers\admincontroller;
-use App\Http\Controllers\AuthController;
-=======
 use Illuminate\Support\Facades\Route;
->>>>>>> origin/API
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,94 +11,65 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-<<<<<<< HEAD
-// ------------------------------
-// 1. Landing & Praktikum
-// ------------------------------
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
-Route::get('/schedule', [PageController::class, 'schedule_master'])->name('schedule');
-Route::get('/materi-modul4', [PageController::class, 'materi'])->name('materi.modul4');
+// ==========================================
+// 1. PINTU MASUK UTAMA
+// ==========================================
+Route::redirect('/', '/login');
 
 
-// ------------------------------
-// 2. Authentication
-// ------------------------------
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-=======
-// Landing
-Route::get('/', [AuthController::class, 'showLogin']);
->>>>>>> origin/API
+// ==========================================
+// 2. MODUL AUTENTIKASI (Guest Only)
+// ==========================================
+Route::middleware('guest')->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::get('/login', 'showLogin')->name('login');
+        Route::post('/login', 'login')->name('login.post');
 
-// Auth Routes (Web)
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::get('/login-admin', function () {
-    return view('auth.login-admin');
-})->name('login.admin');
-<<<<<<< HEAD
+        Route::get('/register', 'showRegister')->name('register');
+        Route::post('/register', 'register')->name('register.post');
+    });
 
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-
-Route::get('/lupa-password', function () {
-    return view('auth.lupa-password');
+    Route::view('/lupa-password', 'auth.lupa-password')->name('forgot-password');
 });
 
-Route::post('/logout', [siswacontroller::class, 'logout'])->name('siswa.logout');
-=======
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Siswa
-Route::get('/materi', function () {
-    return view('siswa.materi');
-})->name('materi');
->>>>>>> origin/API
+// ==========================================
+// 3. MODUL SETELAH LOGIN (Authenticated Only)
+// ==========================================
+Route::middleware('auth')->group(function () {
 
+    // Proses Keluar Akun
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// ------------------------------
-// 3. Modul Siswa (siswacontroller)
-// ------------------------------
-Route::get('/materi', [siswacontroller::class, 'materi'])->name('siswa.materi');
-Route::get('/siswa/materi/{id}', [siswacontroller::class, 'bacaMateri'])->name('siswa.baca-materi');
+    // Beranda Utama Siswa
+    Route::view('/beranda', 'siswa.home')->name('home');
 
-Route::get('/kuis/{id?}', [siswacontroller::class, 'kuis'])->name('siswa.kuis');
-Route::post('/kuis/submit', [siswacontroller::class, 'submitKuis'])->name('siswa.kuis.submit');
+    // ------------------------------------------
+    // A. SUB-MODUL SISWA
+    // ------------------------------------------
+    Route::prefix('siswa')->name('siswa.')->controller(SiswaController::class)->group(function () {
+        Route::get('/materi', 'materi')->name('materi');
+        Route::get('/materi/{id}', 'bacaMateri')->name('baca-materi');
 
-Route::get('/nilai', [siswacontroller::class, 'nilai'])->name('siswa.nilai');
-Route::get('/evaluasi-siswa', [siswacontroller::class, 'evaluasiSiswa'])->name('siswa.evaluasi-siswa');
-Route::get('/rekap', [siswacontroller::class, 'rekap'])->name('siswa.rekap');
+        Route::get('/kuis/{id?}', 'kuis')->name('kuis');
+        Route::post('/kuis/submit', 'submitKuis')->name('kuis.submit');
 
-// ------------------------------
-// 4. Modul Admin
-// ------------------------------
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+        Route::get('/nilai', 'nilai')->name('nilai');
+        Route::get('/evaluasi', 'evaluasiSiswa')->name('evaluasi-siswa');
+        Route::get('/rekap', 'rekap')->name('rekap');
+    });
 
-Route::get('/data-pelajar', function () {
-    return view('admin.data-pelajar');
-})->name('admin.data-pelajar');
+    // ------------------------------------------
+    // B. SUB-MODUL ADMIN
+    // ------------------------------------------
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::view('/', 'admin.dashboard')->name('dashboard');
+        Route::view('/data-pelajar', 'admin.data-pelajar')->name('data-pelajar');
+        Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
+        Route::view('/laporan', 'admin.laporan')->name('laporan');
+        Route::view('/rekap', 'admin.rekap')->name('rekap');
 
-Route::get('/evaluasi', function () {
-    return view('admin.evaluasi');
-})->name('admin.evaluasi');
+        Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
+    });
 
-Route::get('/laporan', function () {
-    return view('admin.laporan');
-<<<<<<< HEAD
-})->name('admin.laporan');
-
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
 });
-=======
-});
->>>>>>> origin/API
