@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -66,13 +67,21 @@ class AuthController extends Controller
     /**
      * Handle user login.
      */
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
         $throttleKey = $request->throttleKey();
 
+        // Cek jika sudah melampaui batas percobaan (5 kali)
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             $minutes = max(1, (int) ceil($seconds / 60));
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => "Terlalu banyak percobaan login yang salah (5 kali).",
+                    'retry_after' => $seconds
+                ], 429);
+            }
 
             return back()->withErrors([
                 'email' => "Terlalu banyak percobaan login yang salah (5 kali). Anda tidak dapat memasukkan password selama {$minutes} menit.",
@@ -82,26 +91,51 @@ class AuthController extends Controller
         $validated = $request->validated();
         $remember = $request->boolean('remember');
 
+        // Proses Login Web (Session)
         if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $remember)) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
-            return redirect()->intended('/materi');
+            // Jika dipanggil via AJAX/Fetch JavaScript
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Login berhasil!',
+                    'redirect' => route('home') // Otomatis mengarah ke route('home') /beranda
+                ]);
+            }
+
+            return redirect()->route('home');
         }
 
+        // Jika Login Gagal -> Tambahkan Hit Limiter
         RateLimiter::hit($throttleKey, 60);
         $attempts = RateLimiter::attempts($throttleKey);
 
-        if ($attempts >= 5) {
+        if ($attempts >= 5 || RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             $minutes = max(1, (int) ceil($seconds / 60));
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Terlalu banyak percobaan login yang salah (5 kali).',
+                    'retry_after' => $seconds
+                ], 429);
+            }
 
             return back()->withErrors([
                 'email' => "Terlalu banyak percobaan login yang salah (5 kali). Anda tidak dapat memasukkan password selama {$minutes} menit.",
             ])->onlyInput('email');
         }
 
-        $remaining = 5 - $attempts;
+        $remaining = max(0, 5 - $attempts);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Email atau password salah.',
+                'remaining_attempts' => $remaining
+            ], 401);
+        }
 
         return back()->withErrors([
             'email' => "Email atau password salah. (Sisa: {$remaining}x percobaan)",

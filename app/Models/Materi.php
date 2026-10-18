@@ -9,13 +9,14 @@ class Materi extends Model
 {
     use HasFactory;
 
-    // Sesuaikan nama tabel jika di database kamu bernama 'materi' atau 'materis'
-    protected $table = 'materis'; 
+    protected $table = 'materi';
 
     protected $fillable = [
+        'modul',
         'judul',
         'kategori',
         'deskripsi',
         'file_pdf',
+        'isi_teks',
     ];
 }

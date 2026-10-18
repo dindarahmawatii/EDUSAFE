@@ -1,47 +1,141 @@
-@extends('layouts.app')
+@extends('layouts.siswa')
 
-@section('title', 'EDUSAFE - Materi Pembelajaran')
+@section('title', 'Materi Pembelajaran Malware - EduQuiz')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/pages/siswa/materi.css') }}?v={{ time() }}">
+@endpush
 
 @section('content')
-<div class="container">
-    <div class="flex-between" style="margin-bottom: 30px;">
-        <div>
-            <h1 style="color: var(--primary); font-size: 28px; font-weight: 700;">Materi Pembelajaran Malware</h1>
-            <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">
-                Pelajari berbagai ancaman siber dan cara melindunginya melalui kurikulum terstruktur.
-            </p>
-        </div>
-        <div class="card" style="padding: 12px 20px; background: #EBF3FF; border: 1px solid #C6DBFF; text-align: center;">
-            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Progres Belajar</span>
-            <h3 style="color: var(--primary); margin-top: 2px; font-size: 18px;">65% Selesai</h3>
-        </div>
-    </div>
-
-    <!-- Grid 3 Kolom Seragam & Simetris -->
-    <div class="grid grid-3">
-        @foreach($materiList as $materi)
-            <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-                <div>
-                    <div class="badge" style="background: var(--secondary); color: var(--primary); margin-bottom: 15px;">
-                        {{ $materi['modul'] }}
-                    </div>
-                    <h3 style="font-size: 18px; color: var(--text-dark); margin-bottom: 10px; font-weight: 700;">
-                        {{ $materi['judul'] }}
-                    </h3>
-                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
-                        {{ $materi['deskripsi'] }}
-                    </p>
+<div class="materi-page-wrapper">
+    <div class="materi-container">
+        
+        <!-- Header & Progres Belajar -->
+        <div class="materi-header-flex">
+            <div class="materi-title-area">
+                <h1 class="materi-main-title">Materi Pembelajaran Malware</h1>
+                <p class="materi-main-desc">
+                    Pelajari berbagai ancaman siber dan cara melindunginya melalui kurikulum terstruktur yang dirancang untuk membekali Anda dengan pengetahuan keamanan terkini.
+                </p>
+            </div>
+            
+            <div class="progres-card">
+                <div class="progres-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
                 </div>
-
-                <div class="flex-between" style="padding-top: 15px; border-top: 1px solid var(--border); margin-top: auto;">
-
-                    <!-- Sesuaikan 'siswa.baca-materi' dengan nama route di web.php -->
-                    <a href="{{ route('siswa.baca-materi', $materi['id']) }}" class="btn" style="padding: 8px 16px; font-size: 13px;">
-                        Buka Materi &rarr;
-                    </a>
+                <div class="progres-info">
+                    <span class="progres-text">Progres Belajar</span>
+                    <h3 class="progres-percentage">65% Selesai</h3>
                 </div>
             </div>
-        @endforeach
+        </div>
+
+        <!-- Grid 3 Kolom Modul -->
+        <div class="materi-grid">
+
+            <!-- Modul 01 -->
+            <div class="modul-card">
+                <div class="modul-thumb preview-thumb">
+                    <span class="modul-badge">Modul 01</span>
+                    <div class="thumb-mockup">
+                        <small>EduQuiz</small>
+                    </div>
+                </div>
+                <div class="modul-content">
+                    <h3 class="modul-title">Pengenalan Malware</h3>
+                    <p class="modul-desc">Memahami dasar-dasar perangkat lunak berbahaya, sejarah perkembangannya, dan mengapa malware menjadi ancaman utama di era digital.</p>
+                    <div class="modul-footer">
+                        <span class="modul-time">⏱ 15 Menit</span>
+                        <a href="{{ route('siswa.baca-materi', 1) }}" class="btn-buka">Buka Materi &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modul 02 -->
+            <div class="modul-card">
+                <div class="modul-thumb blue-gradient-thumb">
+                    <span class="modul-badge">Modul 02</span>
+                    <div class="thumb-icon">🐛</div>
+                </div>
+                <div class="modul-content">
+                    <h3 class="modul-title">Jenis-jenis Malware</h3>
+                    <p class="modul-desc">Identifikasi perbedaan antara Virus, Worm, Trojan, Ransomware, dan Spyware serta cara kerja unik masing-masing ancaman.</p>
+                    <div class="modul-footer">
+                        <span class="modul-time">⏱ 25 Menit</span>
+                        <a href="{{ route('siswa.baca-materi', 2) }}" class="btn-buka">Buka Materi &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modul 03 -->
+            <div class="modul-card">
+                <div class="modul-thumb dark-thumb">
+                    <span class="modul-badge">Modul 03</span>
+                    <div class="thumb-icon">🛡️</div>
+                </div>
+                <div class="modul-content">
+                    <h3 class="modul-title">Mekanisme Infeksi</h3>
+                    <p class="modul-desc">Mempelajari jalur distribusi malware melalui email phishing, unduhan berbahaya, dan kerentanan sistem operasi.</p>
+                    <div class="modul-footer">
+                        <span class="modul-time">⏱ 20 Menit</span>
+                        <a href="{{ route('siswa.baca-materi', 3) }}" class="btn-buka">Buka Materi &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modul 04 -->
+            <div class="modul-card">
+                <div class="modul-thumb deep-blue-thumb">
+                    <span class="modul-badge">Modul 04</span>
+                    <div class="thumb-icon">📊</div>
+                </div>
+                <div class="modul-content">
+                    <h3 class="modul-title">Analisis Malware Dasar</h3>
+                    <p class="modul-desc">Teknik dasar untuk mengamati perilaku file mencurigakan dalam lingkungan sandbox yang aman tanpa membahayakan sistem.</p>
+                    <div class="modul-footer">
+                        <span class="modul-time">⏱ 30 Menit</span>
+                        <a href="{{ route('siswa.baca-materi', 4) }}" class="btn-buka">Buka Materi &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modul 05 -->
+            <div class="modul-card">
+                <div class="modul-thumb royal-blue-thumb">
+                    <span class="modul-badge">Modul 05</span>
+                    <div class="thumb-icon">🛡️</div>
+                </div>
+                <div class="modul-content">
+                    <h3 class="modul-title">Pencegahan & Mitigasi</h3>
+                    <p class="modul-desc">Strategi pertahanan berlapis, penggunaan perangkat lunak antivirus, dan praktik keamanan terbaik untuk individu dan organisasi.</p>
+                    <div class="modul-footer">
+                        <span class="modul-time">⏱ 18 Menit</span>
+                        <a href="{{ route('siswa.baca-materi', 5) }}" class="btn-buka">Buka Materi &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modul Terkunci -->
+            <div class="modul-card locked-card">
+                <div class="modul-thumb locked-thumb">
+                    <div class="lock-icon">🔒</div>
+                </div>
+                <div class="modul-content">
+                    <h3 class="modul-title locked-title">Studi Kasus Lanjutan</h3>
+                    <p class="modul-desc locked-desc">Bedah tuntas serangan malware nyata yang terjadi di industri teknologi dalam 5 tahun terakhir. Segera hadir.</p>
+                    <div class="modul-footer">
+                        <span class="btn-terkunci">Terkunci</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tombol Bottom Dropdown -->
+        <div class="materi-bottom-action">
+            <button class="btn-lihat-semua">Lihat Semua Materi &or;</button>
+        </div>
+
     </div>
 </div>
 @endsection

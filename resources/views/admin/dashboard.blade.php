@@ -78,11 +78,6 @@
             </div>
 
             <div class="input-group">
-                <label>Kategori</label>
-                <input type="text" name="kategori" required placeholder="Contoh: Cybersecurity Fundamentals">
-            </div>
-
-            <div class="input-group">
                 <label>Deskripsi Singkat</label>
                 <textarea name="deskripsi" rows="3" required placeholder="Jelaskan ringkasan isi modul..."></textarea>
             </div>

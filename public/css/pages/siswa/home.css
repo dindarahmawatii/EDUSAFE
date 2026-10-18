@@ -1,0 +1,143 @@
+/* ==========================================================================
+   public/css/pages/siswa/home.css - Beranda Siswa (Sesuai Mockup DPPL)
+   ========================================================================== */
+
+/* Hero Banner Gradasi Horizontal */
+.hero-banner {
+    background: linear-gradient(90deg, #2D5EAD 0%, #4A8EDB 40%, #BBE0F9 100%);
+    padding: 70px 20px 80px;
+    text-align: center;
+    width: 100%;
+}
+
+.hero-title {
+    font-size: 56px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 6px;
+    letter-spacing: -1px;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 28px;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.hero-actions .btn {
+    padding: 9px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Tombol Materi (Abu Terang) */
+.hero-actions .btn-light {
+    background-color: #E2E3E5;
+    color: #1A1A1A;
+    border: 1px solid #CBD5E1;
+}
+.hero-actions .btn-light:hover {
+    background-color: #D4D6D9;
+}
+
+/* Tombol Kuis (Hitam Gelap) */
+.hero-actions .btn-dark {
+    background-color: #2C2C2C;
+    color: #FFFFFF;
+    border: 1px solid transparent;
+}
+.hero-actions .btn-dark:hover {
+    background-color: #111111;
+}
+
+/* Section Grid Materi */
+.materi-section {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+}
+
+.materi-header {
+    margin-bottom: 24px;
+}
+
+.materi-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 2px;
+}
+
+.materi-header p {
+    font-size: 14px;
+    color: #6B7280;
+}
+
+.materi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+/* Card Kartu Materi (Biru Muda Sesuai Mockup) */
+.materi-card {
+    background-color: #C3E2F6;
+    border-radius: 12px;
+    padding: 24px 22px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    display: block;
+    min-height: 150px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.materi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(45, 94, 173, 0.15);
+}
+
+.materi-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 10px;
+}
+
+.materi-card-question {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 4px;
+}
+
+.materi-card-snippet {
+    font-size: 12px;
+    color: #64748B;
+    line-height: 1.4;
+}
+
+/* Responsif Layar */
+@media (max-width: 900px) {
+    .materi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .materi-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-title {
+        font-size: 40px;
+    }
+}
