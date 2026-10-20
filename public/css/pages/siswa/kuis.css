@@ -1,0 +1,59 @@
+/* ==========================================================================
+   public/css/pages/siswa/kuis.css - Efisien & Sesuai DPPL
+   ========================================================================== */
+.quiz-wrap { background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #E0F2FE 100%); min-height: calc(100vh - 120px); padding: 40px 20px; }
+.quiz-container { max-width: 1060px; margin: 0 auto; }
+
+/* Top Bar */
+.quiz-top-bar { background: #FFFFFF; border: 1px solid #D9DEE8; border-radius: 12px; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.quiz-progress-label { display: flex; justify-content: space-between; font-size: 13px; color: #475569; margin-bottom: 8px; width: 450px; }
+.quiz-progress-track { background: #E2E8F0; height: 8px; border-radius: 4px; overflow: hidden; width: 450px; }
+.quiz-progress-fill { background: #00288A; width: 70%; height: 100%; border-radius: 4px; }
+.quiz-timer-box { background: #FEE2E2; color: #DC2626; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 15px; border: 1px solid #FCA5A5; }
+
+/* Main Grid */
+.quiz-main-grid { display: grid; grid-template-columns: 2.3fr 1fr; gap: 24px; margin-bottom: 24px; }
+.quiz-question-card, .quiz-sidebar, .info-card { background: #DDF0FF; border: 1px solid #BFDBFE; border-radius: 16px; padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.03); }
+
+/* Question */
+.q-badge { background: #00288A; color: #FFF; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 6px; display: inline-block; margin-bottom: 14px; }
+.q-title { font-size: 20px; font-weight: 800; color: #0F172A; margin-bottom: 24px; line-height: 1.4; }
+
+/* Options */
+.options-stack { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+.opt-card { background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: #1E293B; cursor: pointer; transition: 0.2s; }
+.opt-card:hover { border-color: #00288A; }
+.opt-card.active { border: 2px solid #00288A; background: #F0F6FF; }
+
+/* Footer Actions */
+.quiz-card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #CBD5E1; padding-top: 20px; }
+.btn-prev { color: #00288A; font-weight: 700; text-decoration: none; font-size: 13px; }
+.quiz-action-right { display: flex; gap: 10px; }
+.btn-ragu { background: #334155; color: #FFF; border: none; padding: 9px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.btn-next { background: #00288A; color: #FFF; text-decoration: none; padding: 9px 20px; border-radius: 8px; font-weight: 700; font-size: 13px; display: inline-block; }
+
+/* Sidebar Navigasi */
+.sidebar-title { font-size: 15px; font-weight: 800; color: #0F172A; margin-bottom: 14px; }
+.num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
+.num-box { background: #FFFFFF; border: 1px solid #CBD5E1; text-align: center; padding: 10px 0; border-radius: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer; }
+.num-box.done { background: #00288A; color: #FFF; border-color: #00288A; }
+.num-box.current { background: #FFF; color: #00288A; border: 2px solid #00288A; }
+
+.status-legend { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 16px; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+.dot.blue { background: #00288A; } .dot.gray { background: #94A3B8; }
+
+.btn-submit-quiz { background: #DCE7FE; color: #00288A; border: 1px solid #93C5FD; width: 100%; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; margin-bottom: 16px; text-align: center; display: block; text-decoration: none; }
+.sidebar-banner { background: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80') center/cover; height: 80px; border-radius: 8px; padding: 10px; display: flex; align-items: flex-end; color: #FFF; font-weight: 800; font-size: 12px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+/* Bottom Info Grid */
+.quiz-bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.info-card { background: #FFFFFF; border: 1px solid #D9DEE8; padding: 20px 24px; }
+.info-title { font-size: 14px; font-weight: 800; color: #0F172A; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.info-card p { font-size: 12px; color: #475569; line-height: 1.5; }
+
+/* Responsive */
+@media(max-width: 900px) {
+    .quiz-main-grid, .quiz-bottom-grid, .quiz-top-bar { grid-template-columns: 1fr; flex-direction: column; align-items: stretch; gap: 16px; }
+    .quiz-progress-label, .quiz-progress-track { width: 100%; }
+}
