@@ -34,7 +34,7 @@ Route::middleware('guest')->group(function () {
 
 
 // ==========================================
-// 3. MODUL SETELAH LOGIN (Authenticated Only)
+// 3. MODUL SISWA (Authenticated Only)
 // ==========================================
 Route::middleware('auth')->group(function () {
 
@@ -44,9 +44,7 @@ Route::middleware('auth')->group(function () {
     // Beranda Utama Siswa
     Route::view('/beranda', 'siswa.home')->name('home');
 
-    // ------------------------------------------
-    // A. SUB-MODUL SISWA
-    // ------------------------------------------
+    // Sub-Modul Siswa
     Route::prefix('siswa')->name('siswa.')->controller(SiswaController::class)->group(function () {
         Route::get('/materi', 'materi')->name('materi');
         Route::get('/materi/{id}', 'bacaMateri')->name('baca-materi');
@@ -59,17 +57,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/rekap', 'rekap')->name('rekap');
     });
 
-    // ------------------------------------------
-    // B. SUB-MODUL ADMIN
-    // ------------------------------------------
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::view('/', 'admin.dashboard')->name('dashboard');
-        Route::view('/data-pelajar', 'admin.data-pelajar')->name('data-pelajar');
-        Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
-        Route::view('/laporan', 'admin.laporan')->name('laporan');
-        Route::view('/rekap', 'admin.rekap')->name('rekap');
+});
 
-        Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
-    });
 
+// ==========================================
+// 4. MODUL ADMIN (Bebas Diakses untuk Testing UI)
+// ==========================================
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::view('/', 'admin.dashboard')->name('dashboard');
+    Route::view('/data-pelajar', 'admin.data-pelajar')->name('data-pelajar');
+    Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
+    Route::view('/laporan', 'admin.laporan')->name('laporan');
+    Route::view('/rekap', 'admin.rekap')->name('rekap');
+
+    Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
 });

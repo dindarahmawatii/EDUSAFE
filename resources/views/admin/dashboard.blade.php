@@ -3,95 +3,176 @@
 @section('title', 'EDUSAFE - Dashboard Admin')
 
 @section('content')
-<div class="container">
-    <!-- 4 Kotak Statistik Utama (Tetap Seperti Semula) -->
-    <div class="grid grid-4" style="grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;">
-        <!-- ... Statistik Cards ... -->
-    </div>
+<div class="admin-page-wrapper">
+    <div class="admin-container">
 
-    <!-- Bagian User Terbaru (Tetap Seperti Semula) -->
-    <div class="card" style="margin-bottom: 30px;">
-        <!-- ... User Terbaru Content ... -->
-    </div>
+        <!-- 4 Kotak Statistik Utama -->
+        <div class="admin-stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon">👥</div>
+                    <span class="stat-trend">+12%↑</span>
+                </div>
+                <div>
+                    <p class="stat-label">Total User</p>
+                    <h3 class="stat-value">1,284</h3>
+                </div>
+            </div>
 
-    <!-- Bagian Tabel Materi Populer -->
-    <div class="card" style="margin-bottom: 20px;">
-        <div class="flex-between" style="margin-bottom: 20px;">
-            <h3>Materi Populer</h3>
-            <!-- Tombol Pemicu Modal -->
-            <button class="btn" onclick="toggleModal(true)">+ Tambah Materi</button>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon">📚</div>
+                    <span class="stat-trend">+5%↑</span>
+                </div>
+                <div>
+                    <p class="stat-label">Jumlah Materi</p>
+                    <h3 class="stat-value">86</h3>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon">⭐</div>
+                    <span class="stat-trend negative">-2%↓</span>
+                </div>
+                <div>
+                    <p class="stat-label">Rata-rata Nilai</p>
+                    <h3 class="stat-value">78.5</h3>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon">⏱</div>
+                    <span class="stat-trend active-tag">Active</span>
+                </div>
+                <div>
+                    <p class="stat-label">Kuis Berjalan</p>
+                    <h3 class="stat-value">24</h3>
+                </div>
+            </div>
         </div>
-        
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                <thead>
-                    <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); text-align: left;">
-                        <th style="padding: 15px;">Nama Materi</th>
-                        <th style="padding: 15px;">Kategori</th>
-                        <th style="padding: 15px;">Dokumen PDF</th>
-                        <th style="padding: 15px;">Status</th>
-                        <th style="padding: 15px;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($materiList ?? [] as $materi)
-                        <tr style="border-bottom: 1px solid var(--border);">
-                            <td style="padding: 15px;">{{ $materi->judul }}</td>
-                            <td style="padding: 15px;">{{ $materi->kategori }}</td>
-                            <td style="padding: 15px;">
-                                @if($materi->file_pdf)
-                                    <span class="badge" style="background: #EBF3FF; color: var(--primary);">📄 Tersedia</span>
-                                @else
-                                    <span class="badge" style="background: #FEE2E2; color: #B91C1C;">Kosong</span>
-                                @endif
-                            </td>
-                            <td style="padding: 15px; color: #10B981; font-weight: bold;">Aktif</td>
-                            <td style="padding: 15px; cursor: pointer; color: var(--text-muted);">⋮</td>
-                        </tr>
-                    @empty
-                        <tr style="border-bottom: 1px solid var(--border);">
-                            <td colspan="5" style="padding: 15px; text-align: center; color: var(--text-muted);">Belum ada materi.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+
+        <!-- Bagian User Terbaru -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">User Terbaru</h3>
+            </div>
+            
+            <div class="user-list">
+                <div class="user-item">
+                    <div class="user-avatar-circle">JD</div>
+                    <div class="user-details">
+                        <h4>Jane Doe</h4>
+                        <p>Baru saja bergabung</p>
+                    </div>
+                </div>
+
+                <div class="user-item">
+                    <div class="user-avatar-circle">AS</div>
+                    <div class="user-details">
+                        <h4>Andi Saputra</h4>
+                        <p>2 jam yang lalu</p>
+                    </div>
+                </div>
+
+                <div class="user-item">
+                    <div class="user-avatar-circle">RK</div>
+                    <div class="user-details">
+                        <h4>Rina Kartika</h4>
+                        <p>5 jam yang lalu</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-outline-full">Lihat Semua User</button>
         </div>
+
+        <!-- Bagian Tabel Materi Populer -->
+        <div class="admin-card">
+            <div class="admin-card-header flex-between">
+                <h3 class="admin-card-title">Materi Populer</h3>
+                <button class="btn-primary-admin" onclick="toggleModal(true)">+ Tambah Materi</button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nama Materi</th>
+                            <th>Kategori</th>
+                            <th>Isi Konten</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($materiList ?? [] as $materi)
+                            <tr>
+                                <td><strong>{{ $materi->judul }}</strong></td>
+                                <td>{{ $materi->kategori }}</td>
+                                <td>
+                                    @if($materi->konten || $materi->isi_teks)
+                                        <span class="badge-status-blue">📝 Teks Tersedia</span>
+                                    @else
+                                        <span class="badge-status-red">Kosong</span>
+                                    @endif
+                                </td>
+                                <td><span class="badge-status-green">Aktif</span></td>
+                                <td class="action-dots">⋮</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="table-empty">
+                                    Belum ada data materi di database. Silakan klik tombol "+ Tambah Materi" di atas.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <!-- ========================================== -->
-<!-- MODAL POPUP FORM TAMBAH MATERI PDF         -->
+<!-- MODAL POPUP FORM TAMBAH MATERI (TEKS)      -->
 <!-- ========================================== -->
-<div id="modalTambahMateri" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
-    <div class="card" style="width: 520px; max-width: 90%; background: white; border-radius: 12px; padding: 30px;">
-        <div class="flex-between" style="margin-bottom: 20px;">
-            <h3 style="color: var(--primary); margin: 0;">Tambah Materi & Upload PDF</h3>
-            <span onclick="toggleModal(false)" style="cursor: pointer; font-size: 20px; font-weight: bold; color: var(--text-muted);">&times;</span>
+<div id="modalTambahMateri" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Tambah Modul Materi Baru</h3>
+            <span class="modal-close" onclick="toggleModal(false)">&times;</span>
         </div>
 
-        <form action="{{ route('admin.materi.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.materi.store') }}" method="POST">
             @csrf
             
-            <div class="input-group">
+            <div class="form-group">
                 <label>Judul Materi</label>
                 <input type="text" name="judul" required placeholder="Contoh: Pengenalan Malware & Ancaman Siber">
             </div>
 
-            <div class="input-group">
-                <label>Deskripsi Singkat</label>
-                <textarea name="deskripsi" rows="3" required placeholder="Jelaskan ringkasan isi modul..."></textarea>
+            <div class="form-group">
+                <label>Kategori Modul</label>
+                <input type="text" name="kategori" required placeholder="Contoh: Cybersecurity Dasar">
             </div>
 
-            <!-- Input File PDF -->
-            <div class="input-group">
-                <label>Upload File PDF Materi</label>
-                <input type="file" name="file_pdf" accept=".pdf" required style="padding: 8px;">
-                <small style="color: var(--text-muted); font-size: 11px;">Format wajib .PDF (Maksimal 10MB)</small>
+            <div class="form-group">
+                <label>Ringkasan / Deskripsi Singkat</label>
+                <textarea name="deskripsi" rows="2" required placeholder="Jelaskan ringkasan singkat isi modul..."></textarea>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
-                <button type="button" class="btn btn-outline" onclick="toggleModal(false)">Batal</button>
-                <button type="submit" class="btn">Simpan & Upload</button>
+            <div class="form-group">
+                <label>Isi Materi Lengkap (Format Teks)</label>
+                <textarea name="konten" rows="6" required placeholder="Tulis atau ketik isi materi pembelajaran secara lengkap di sini..."></textarea>
+                <small>Teks ini nantinya akan dibaca langsung oleh siswa melalui halaman baca materi.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="toggleModal(false)">Batal</button>
+                <button type="submit" class="btn-submit">Simpan Materi</button>
             </div>
         </form>
     </div>

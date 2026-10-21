@@ -4,20 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'EDUSAFE - Admin Panel')</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    
+    <!-- CSS Base & Component -->
+    <link rel="stylesheet" href="{{ asset('css/base/variables.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/base/reset.css') }}?v={{ time() }}">
+    
+    <!-- CSS Admin Page & Layout -->
+    <link rel="stylesheet" href="{{ asset('css/pages/admin/admin.css') }}?v={{ time() }}">
+    
+    @stack('styles')
 </head>
-<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
+<body>
 
-    {{-- Header Khusus Admin --}}
-    @include('partials.header-admin')
+    {{-- Header / Navbar Admin --}}
+    @include('partials.navbar-admin')
 
-    {{-- Isi Konten Halaman Admin --}}
-    <main style="flex: 1;">
+    {{-- Main Content --}}
+    <main class="admin-main-content">
         @yield('content')
     </main>
 
-    {{-- Footer Khusus Admin --}}
+    {{-- Footer Admin --}}
     @include('partials.footer-admin')
 
+    @stack('scripts')
 </body>
 </html>
