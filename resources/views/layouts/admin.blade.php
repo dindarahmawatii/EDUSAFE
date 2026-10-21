@@ -1,23 +1,20 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'EDUSAFE - Admin Panel')</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-</head>
-<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
+<nav class="navbar">
+    <a href="{{ route('admin.dashboard') }}" class="brand">EduQuiz <span style="font-size:12px; color:var(--text-muted);">(Admin Panel)</span></a>
 
-    {{-- Header Khusus Admin --}}
-    @include('partials.header-admin')
+    <div class="nav-right">
+        <ul class="nav-links">
+            <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Dashboard</a></li>
+            <li><a href="{{ route('admin.data-pelajar') }}" class="{{ request()->routeIs('admin.data-pelajar') ? 'active' : '' }}">Data Pelajar</a></li>
+            <li><a href="{{ route('admin.evaluasi') }}" class="{{ request()->routeIs('admin.evaluasi') ? 'active' : '' }}">Evaluasi</a></li>
+            <li><a href="{{ route('admin.laporan') }}" class="{{ request()->routeIs('admin.laporan') ? 'active' : '' }}">Laporan</a></li>
+            <li><a href="{{ route('admin.rekap') }}" class="{{ request()->routeIs('admin.rekap') ? 'active' : '' }}">Rekap</a></li>
+        </ul>
 
-    {{-- Isi Konten Halaman Admin --}}
-    <main style="flex: 1;">
-        @yield('content')
-    </main>
-
-    {{-- Footer Khusus Admin --}}
-    @include('partials.footer-admin')
-
-</body>
-</html>
+        <div class="nav-auth">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-outline">Logout Admin</button>
+            </form>
+        </div>
+    </div>
+</nav>
