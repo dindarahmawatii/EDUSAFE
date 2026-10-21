@@ -55,6 +55,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/nilai', 'nilai')->name('nilai');
         Route::get('/evaluasi', 'evaluasiSiswa')->name('evaluasi-siswa');
         Route::get('/rekap', 'rekap')->name('rekap');
+        
+        // Rute Review Jawaban Siswa
+        Route::view('/review-jawaban', 'siswa.review')->name('review');
     });
 
 });
