@@ -22,7 +22,7 @@
             <p class="nilai-main-desc">Pantau kemajuan belajar Anda dan akses sertifikat resmi.</p>
         </div>
 
-        <!-- Grid Top Cards (Quiz Terakhir & Kemajuan Kursus) -->
+        <!-- Grid Top Cards -->
         <div class="top-cards-grid">
             
             <!-- Card Quiz Terakhir -->
@@ -32,8 +32,10 @@
                     <h2 class="quiz-title">
                         {{ data_get($kuisTerakhir, 'nama_modul', 'Malware Analysis Fundamentals') }}
                     </h2>
-                    <p class="quiz-date">Diselesaikan pada {{ data_get($kuisTerakhir, 'tanggal', '24 Okt 2026') }}</p>
-                    <a href="{{ route('siswa.rekap') }}" class="btn-review">
+                    <p class="quiz-date">Diselesaikan pada 24 Okt 2026</p>
+                    
+                    <!-- LINK SUDAH DIPERBAIKI KE ROUTE REVIEW -->
+                    <a href="{{ route('siswa.review') }}" class="btn-review">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         Review Jawaban
                     </a>
@@ -56,27 +58,22 @@
                         <span>Materi Selesai</span>
                         <strong>{{ $materiVal }}/15</strong>
                     </div>
-                    <div class="progress-group">
-                        <div class="progress-labels">
-                            <span>Materi Selesai</span>
-                            <strong>{{ $materiVal }}/15</strong>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="--w: {{ $persenMateri }}%;"></div>
-                        </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="--w: {{ $persenMateri }}%;"></div>
                     </div>
+                </div>
 
-                    <div class="progress-group">
-                        <div class="progress-labels">
-                            <span>Rata-rata Nilai</span>
-                            <strong>{{ number_format($rataNilaiVal, 1) }}</strong>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="--w: {{ $rataNilaiVal }}%;"></div>
-                        </div>
+                <div class="progress-group" style="margin-top: 12px;">
+                    <div class="progress-labels">
+                        <span>Rata-rata Nilai</span>
+                        <strong>{{ number_format($rataNilaiVal, 1) }}</strong>
                     </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="--w: {{ $rataNilaiVal }}%;"></div>
+                    </div>
+                </div>
 
-                <p class="kemajuan-note">
+                <p class="kemajuan-note" style="margin-top: 16px;">
                     "Tinggal {{ 15 - $materiVal }} modul lagi untuk mendapatkan sertifikat profesional!"
                 </p>
             </div>
@@ -109,7 +106,7 @@
                             <span class="item-score">95/100</span>
                             <span class="item-status status-sangat-baik">Sangat Baik</span>
                         </div>
-                        <span class="item-arrow">&rsaquo;</span>
+                        <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
                     </div>
                 </div>
 
@@ -126,7 +123,7 @@
                             <span class="item-score">82/100</span>
                             <span class="item-status status-lulus">Lulus</span>
                         </div>
-                        <span class="item-arrow">&rsaquo;</span>
+                        <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
                     </div>
                 </div>
 
@@ -143,7 +140,7 @@
                             <span class="item-score">90/100</span>
                             <span class="item-status status-sangat-baik">Sangat Baik</span>
                         </div>
-                        <span class="item-arrow">&rsaquo;</span>
+                        <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
                     </div>
                 </div>
 

@@ -146,13 +146,56 @@
             </div>
         </div>
 
+        <div class="admin-card" style="margin-top: 30px;">
+            <div class="admin-card-header flex-between">
+                <div>
+                    <h3 class="admin-card-title">Kelola Soal Kuis & Kunci Jawaban</h3>
+                    <p style="color: #64748B; font-size: 13px; margin: 4px 0 0 0;">Atur pertanyaan kuis, pilihan ganda, dan kunci jawaban untuk evaluasi siswa.</p>
+                </div>
+                <button class="btn-primary-admin" onclick="toggleModalKuis(true)">+ Tambah Soal Kuis</button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pertanyaan Soal</th>
+                            <th>Kategori Modul</th>
+                            <th>Opsi Jawaban</th>
+                            <th>Kunci Jawaban</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($kuisList ?? [] as $kuis)
+                            <tr>
+                                <td><strong>{{ Str::limit($kuis->pertanyaan, 40) }}</strong></td>
+                                <td>{{ $kuis->kategori }}</td>
+                                <td>4 Pilihan (A, B, C, D)</td>
+                                <td><span class="badge-status-green">Opsi {{ $kuis->kunci_jawaban }}</span></td>
+                                <td>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn-cancel" style="padding: 4px 10px; font-size: 11px;">Edit</button>
+                                        <button class="btn-cancel" style="padding: 4px 10px; font-size: 11px; color: #EF4444; border-color: #FCA5A5;">Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="table-empty">
+                                    Belum ada soal kuis di database. Silakan klik tombol "+ Tambah Soal Kuis" di atas.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- MODAL POPUP FORM TAMBAH MATERI (TEKS)      -->
-<!-- ========================================== -->
-<div id="modalTambahMateri" class="modal-overlay" data-open="{{ $errors->any() ? '1' : '0' }}">
+<div id="modalTambahMateri" class="modal-overlay">
     <div class="modal-card">
         <div class="modal-header">
             <h3>Tambah Modul Materi Baru</h3>
@@ -191,6 +234,63 @@
     </div>
 </div>
 
+<div id="modalTambahKuis" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Tambah Soal Kuis & Kunci Jawaban</h3>
+            <span class="modal-close" onclick="toggleModalKuis(false)">&times;</span>
+        </div>
+
+        <form action="#" method="POST">
+            @csrf
+            
+            <div class="form-group">
+                <label>Pertanyaan Soal</label>
+                <textarea name="pertanyaan" rows="3" required placeholder="Tuliskan pertanyaan kuis di sini..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Pilihan A</label>
+                <input type="text" name="opsi_a" required placeholder="Jawaban pilihan A">
+            </div>
+            <div class="form-group">
+                <label>Pilihan B</label>
+                <input type="text" name="opsi_b" required placeholder="Jawaban pilihan B">
+            </div>
+            <div class="form-group">
+                <label>Pilihan C</label>
+                <input type="text" name="opsi_c" required placeholder="Jawaban pilihan C">
+            </div>
+            <div class="form-group">
+                <label>Pilihan D</label>
+                <input type="text" name="opsi_d" required placeholder="Jawaban pilihan D">
+            </div>
+
+            <div class="form-group">
+                <label>Kunci Jawaban yang Benar</label>
+                <select name="kunci_jawaban" style="width: 100%; padding: 10px; border: 1px solid #CBD5E1; border-radius: 8px; background: #FFF;" required>
+                    <option value="">-- Pilih Kunci Jawaban --</option>
+                    <option value="A">Opsi A</option>
+                    <option value="B">Opsi B</option>
+                    <option value="C">Opsi C</option>
+                    <option value="D">Opsi D</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="margin-top: 16px;">
+                <label>Pembahasan / Penjelasan Jawaban</label>
+                <textarea name="pembahasan" rows="3" required placeholder="Tuliskan alasan atau penjelasan kenapa jawaban tersebut yang paling tepat..."></textarea>
+                <small>Pembahasan ini akan dibaca oleh siswa di halaman hasil kuis setelah mereka selesai mengerjakannya.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="toggleModalKuis(false)">Batal</button>
+                <button type="submit" class="btn-submit">Simpan Soal Kuis</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         if (document.getElementById('modalTambahMateri').dataset.open === '1') {
@@ -199,6 +299,10 @@
     });
     function toggleModal(show) {
         document.getElementById('modalTambahMateri').style.display = show ? 'flex' : 'none';
+    }
+
+    function toggleModalKuis(show) {
+        document.getElementById('modalTambahKuis').style.display = show ? 'flex' : 'none';
     }
 </script>
 @endsection
