@@ -5,12 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Materi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
     /**
-     * Menyimpan data materi PDF baru dari Admin.
+     * Dashboard admin: daftar materi dari database.
+     */
+    public function dashboard(): View
+    {
+        try {
+            $materiList = Materi::orderByDesc((new Materi)->getKeyName())->get();
+        } catch (\Throwable $e) {
+            $materiList = collect();
+        }
+
+        $totalMateri = $materiList->count();
+
+        return view('admin.dashboard', compact('materiList', 'totalMateri'));
+    }
+
+    /**
+     * Menyimpan materi baru (teks) dari dashboard admin ke tabel `materi`.
      */
     public function storeMateri(Request $request): RedirectResponse
     {
@@ -18,20 +36,26 @@ class AdminController extends Controller
             'judul'     => 'required|string|max:255',
             'kategori'  => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'file_pdf'  => 'required|mimes:pdf|max:10240',
+            'konten'    => 'required|string',
         ]);
 
-        $file = $request->file('file_pdf');
-        $filename = time() . '_' . Str::slug($validated['judul']) . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('uploads/pdf'), $filename);
+        // Tabel MySQL memakai kolom namamateri/konten; kolom lain ditambahkan hanya jika ada.
+        $data = [
+            'namamateri' => $validated['judul'],
+            'kategori'   => $validated['kategori'],
+            'konten'     => $validated['konten'],
+        ];
 
-        Materi::create([
-            'judul'     => $validated['judul'],
-            'kategori'  => $validated['kategori'],
-            'deskripsi' => $validated['deskripsi'],
-            'file_pdf'  => $filename,
-        ]);
+        if (Schema::hasColumn('materi', 'deskripsi')) {
+            $data['deskripsi'] = $validated['deskripsi'];
+        }
 
-        return back()->with('success', 'Materi PDF berhasil diunggah!');
+        if (Schema::hasColumn('materi', 'created_at')) {
+            $data['created_at'] = now();
+        }
+
+        DB::table('materi')->insert($data);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Materi berhasil ditambahkan!');
     }
 }

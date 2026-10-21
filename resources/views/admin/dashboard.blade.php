@@ -6,6 +6,19 @@
 <div class="admin-page-wrapper">
     <div class="admin-container">
 
+        @if(session('success'))
+            <div style="background:#DCFCE7;color:#166534;border:1px solid #BBF7D0;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:14px;font-weight:600;">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if($errors->any())
+            <div style="background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:14px;">
+                @foreach($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
+
         <!-- 4 Kotak Statistik Utama -->
         <div class="admin-stats-grid">
             <div class="stat-card">
@@ -26,7 +39,7 @@
                 </div>
                 <div>
                     <p class="stat-label">Jumlah Materi</p>
-                    <h3 class="stat-value">86</h3>
+                    <h3 class="stat-value">{{ $totalMateri ?? 0 }}</h3>
                 </div>
             </div>
 
@@ -139,7 +152,7 @@
 <!-- ========================================== -->
 <!-- MODAL POPUP FORM TAMBAH MATERI (TEKS)      -->
 <!-- ========================================== -->
-<div id="modalTambahMateri" class="modal-overlay">
+<div id="modalTambahMateri" class="modal-overlay" data-open="{{ $errors->any() ? '1' : '0' }}">
     <div class="modal-card">
         <div class="modal-header">
             <h3>Tambah Modul Materi Baru</h3>
@@ -151,22 +164,22 @@
             
             <div class="form-group">
                 <label>Judul Materi</label>
-                <input type="text" name="judul" required placeholder="Contoh: Pengenalan Malware & Ancaman Siber">
+                <input type="text" name="judul" value="{{ old('judul') }}" required placeholder="Contoh: Pengenalan Malware & Ancaman Siber">
             </div>
 
             <div class="form-group">
                 <label>Kategori Modul</label>
-                <input type="text" name="kategori" required placeholder="Contoh: Cybersecurity Dasar">
+                <input type="text" name="kategori" value="{{ old('kategori') }}" required placeholder="Contoh: Cybersecurity Dasar">
             </div>
 
             <div class="form-group">
                 <label>Ringkasan / Deskripsi Singkat</label>
-                <textarea name="deskripsi" rows="2" required placeholder="Jelaskan ringkasan singkat isi modul..."></textarea>
+                <textarea name="deskripsi" rows="2" required placeholder="Jelaskan ringkasan singkat isi modul...">{{ old('deskripsi') }}</textarea>
             </div>
 
             <div class="form-group">
                 <label>Isi Materi Lengkap (Format Teks)</label>
-                <textarea name="konten" rows="6" required placeholder="Tulis atau ketik isi materi pembelajaran secara lengkap di sini..."></textarea>
+                <textarea name="konten" rows="6" required placeholder="Tulis atau ketik isi materi pembelajaran secara lengkap di sini...">{{ old('konten') }}</textarea>
                 <small>Teks ini nantinya akan dibaca langsung oleh siswa melalui halaman baca materi.</small>
             </div>
 
@@ -179,6 +192,11 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('modalTambahMateri').dataset.open === '1') {
+            toggleModal(true);
+        }
+    });
     function toggleModal(show) {
         document.getElementById('modalTambahMateri').style.display = show ? 'flex' : 'none';
     }

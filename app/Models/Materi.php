@@ -64,6 +64,6 @@ class Materi extends Model
      */
     public function getDeskripsiAttribute(): mixed
     {
-        return $this->attributes['konten'] ?? $this->attributes['deskripsi'] ?? null;
+        return $this->attributes['deskripsi'] ?? $this->attributes['konten'] ?? null;
     }
 }

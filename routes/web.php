@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
 // 4. MODUL ADMIN (Bebas Diakses untuk Testing UI)
 // ==========================================
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::view('/', 'admin.dashboard')->name('dashboard');
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::view('/data-pelajar', 'admin.data-pelajar')->name('data-pelajar');
     Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
     Route::view('/laporan', 'admin.laporan')->name('laporan');
