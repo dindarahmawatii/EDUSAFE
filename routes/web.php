@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SiswaController;
-use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +15,6 @@ use App\Http\Controllers\AdminController;
 // 1. PINTU MASUK UTAMA
 // ==========================================
 Route::redirect('/', '/login');
-
 
 // ==========================================
 // 2. MODUL AUTENTIKASI (Guest Only)
@@ -32,7 +31,6 @@ Route::middleware('guest')->group(function () {
     Route::view('/lupa-password', 'auth.lupa-password')->name('forgot-password');
 });
 
-
 // ==========================================
 // 3. MODUL SETELAH LOGIN (Authenticated Only)
 // ==========================================
@@ -42,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Beranda Utama Siswa
-    Route::view('/beranda', 'siswa.home')->name('home');
+    Route::get('/beranda', [SiswaController::class, 'home'])->name('home');
 
     // ------------------------------------------
     // A. SUB-MODUL SISWA
@@ -71,5 +69,4 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
     });
-
 });

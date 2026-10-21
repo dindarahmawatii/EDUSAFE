@@ -30,9 +30,9 @@
                 <div class="quiz-info-left">
                     <span class="badge-quiz">Quiz Terakhir</span>
                     <h2 class="quiz-title">
-                        {{ isset($kuisTerakhir) && $kuisTerakhir ? $kuisTerakhir->nama_modul : 'Malware Analysis Fundamentals' }}
+                        {{ data_get($kuisTerakhir, 'nama_modul', 'Malware Analysis Fundamentals') }}
                     </h2>
-                    <p class="quiz-date">Diselesaikan pada 24 Okt 2026</p>
+                    <p class="quiz-date">Diselesaikan pada {{ data_get($kuisTerakhir, 'tanggal', '24 Okt 2026') }}</p>
                     <a href="{{ route('siswa.rekap') }}" class="btn-review">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         Review Jawaban
@@ -41,7 +41,7 @@
 
                 <div class="score-circle-wrapper">
                     <div class="score-circle">
-                        <span class="score-number">{{ isset($kuisTerakhir) && $kuisTerakhir ? $kuisTerakhir->skor : 90 }}</span>
+                        <span class="score-number">{{ data_get($kuisTerakhir, 'skor', 90) }}</span>
                         <span class="score-label">Skor Akhir</span>
                     </div>
                 </div>

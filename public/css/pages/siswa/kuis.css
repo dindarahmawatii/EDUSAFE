@@ -37,13 +37,15 @@
 .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
 .num-box { background: #FFFFFF; border: 1px solid #CBD5E1; text-align: center; padding: 10px 0; border-radius: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer; }
 .num-box.done { background: #00288A; color: #FFF; border-color: #00288A; }
+.num-box.ragu { background: #F59E0B !important; color: #FFF !important; border-color: #D97706 !important; }
 .num-box.current { background: #FFF; color: #00288A; border: 2px solid #00288A; }
 
 .status-legend { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 16px; }
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
-.dot.blue { background: #00288A; } .dot.gray { background: #94A3B8; }
+.dot.blue { background: #00288A; } .dot.gray { background: #94A3B8; } .dot.yellow { background: #F59E0B; }
 
-.btn-submit-quiz { background: #DCE7FE; color: #00288A; border: 1px solid #93C5FD; width: 100%; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; margin-bottom: 16px; text-align: center; display: block; text-decoration: none; }
+.btn-submit-quiz { background: #DCE7FE; color: #00288A; border: 1px solid #93C5FD; width: 100%; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; margin-bottom: 16px; text-align: center; display: block; text-decoration: none; transition: 0.2s; }
+.btn-submit-quiz:hover { background: #00288A; color: #FFFFFF; }
 .sidebar-banner { background: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80') center/cover; height: 80px; border-radius: 8px; padding: 10px; display: flex; align-items: flex-end; color: #FFF; font-weight: 800; font-size: 12px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
 /* Bottom Info Grid */

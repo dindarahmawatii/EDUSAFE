@@ -24,24 +24,24 @@
                 </div>
                 <div>
                     <div class="profile-name-row">
-                        <h3 class="profile-name">Rizky Pratama</h3>
+                        <h3 class="profile-name">{{ Auth::user()?->name ?? 'Rizky Pratama' }}</h3>
                         <span class="badge-active">ACTIVE SCHOLAR</span>
                     </div>
-                    <p class="profile-meta">ID: <strong>EDU-2024-089</strong> &bull; Modul Saat Ini: <strong>Malware Analysis Fundamentals</strong></p>
+                    <p class="profile-meta">ID: <strong>EDU-{{ str_pad((string)(Auth::id() ?? 1), 4, '0', STR_PAD_LEFT) }}</strong> &bull; Modul Saat Ini: <strong>Pengenalan Malware & Ancaman Siber</strong></p>
                 </div>
             </div>
 
             <div class="profile-stats-right">
                 <div class="stat-box">
-                    <span class="stat-value">88%</span>
+                    <span class="stat-value">{{ $rerataKuis ?? 88 }}%</span>
                     <span class="stat-label">RERATA KUIS</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-value">12/15</span>
-                    <span class="stat-label">LAB SELESAI</span>
+                    <span class="stat-value">{{ $materiSelesai ?? 0 }}/{{ $totalMateri ?? 6 }}</span>
+                    <span class="stat-label">MODUL SELESAI</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-value">A-</span>
+                    <span class="stat-value">{{ $predikat ?? 'A' }}</span>
                     <span class="stat-label">PREDIKAT</span>
                 </div>
             </div>

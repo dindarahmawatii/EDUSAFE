@@ -25,7 +25,7 @@
         </div>
 
         <div class="materi-grid">
-            <a href="{{ route('siswa.materi') }}" class="materi-card">
+            <a href="{{ route('siswa.baca-materi', 1) }}" class="materi-card">
                 <div>
                     <h3 class="materi-card-title">Pengenalan Malware</h3>
                     <p class="materi-card-question">Apa itu Malware?</p>
@@ -33,7 +33,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('siswa.materi') }}" class="materi-card">
+            <a href="{{ route('siswa.baca-materi', 2) }}" class="materi-card">
                 <div>
                     <h3 class="materi-card-title">Jenis-Jenis Malware</h3>
                     <p class="materi-card-question">Apa saja jenis Malware?</p>
@@ -41,7 +41,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('siswa.materi') }}" class="materi-card">
+            <a href="{{ route('siswa.baca-materi', 3) }}" class="materi-card">
                 <div>
                     <h3 class="materi-card-title">Cara Mengatasi Malware</h3>
                     <p class="materi-card-question">Bagaimana cara mengatasinya?</p>
@@ -49,7 +49,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('siswa.materi') }}" class="materi-card">
+            <a href="{{ route('siswa.baca-materi', 4) }}" class="materi-card">
                 <div>
                     <h3 class="materi-card-title">Upaya Pencegahan</h3>
                     <p class="materi-card-question">Bagaimana upaya pencegahannya?</p>
@@ -57,7 +57,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('siswa.materi') }}" class="materi-card">
+            <a href="{{ route('siswa.baca-materi', 5) }}" class="materi-card">
                 <div>
                     <h3 class="materi-card-title">Sejarah Malware</h3>
                     <p class="materi-card-question">Kapan Malware pertama kali ada?</p>
@@ -65,7 +65,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('siswa.materi') }}" class="materi-card">
+            <a href="{{ route('siswa.baca-materi', 6) }}" class="materi-card">
                 <div>
                     <h3 class="materi-card-title">Cara Kerja Malware</h3>
                     <p class="materi-card-question">Bagaimana cara kerjanya?</p>
