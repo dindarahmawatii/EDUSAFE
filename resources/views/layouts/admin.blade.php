@@ -1,20 +1,32 @@
-<nav class="navbar">
-    <a href="{{ route('admin.dashboard') }}" class="brand">EduQuiz <span style="font-size:12px; color:var(--text-muted);">(Admin Panel)</span></a>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'EDUSAFE - Admin Panel')</title>
+    
+    <!-- CSS Base & Component -->
+    <link rel="stylesheet" href="{{ asset('css/base/variables.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/base/reset.css') }}?v={{ time() }}">
+    
+    <!-- CSS Admin Page & Layout -->
+    <link rel="stylesheet" href="{{ asset('css/pages/admin/admin.css') }}?v={{ time() }}">
+    
+    @stack('styles')
+</head>
+<body>
 
-    <div class="nav-right">
-        <ul class="nav-links">
-            <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Dashboard</a></li>
-            <li><a href="{{ route('admin.data-pelajar') }}" class="{{ request()->routeIs('admin.data-pelajar') ? 'active' : '' }}">Data Pelajar</a></li>
-            <li><a href="{{ route('admin.evaluasi') }}" class="{{ request()->routeIs('admin.evaluasi') ? 'active' : '' }}">Evaluasi</a></li>
-            <li><a href="{{ route('admin.laporan') }}" class="{{ request()->routeIs('admin.laporan') ? 'active' : '' }}">Laporan</a></li>
-            <li><a href="{{ route('admin.rekap') }}" class="{{ request()->routeIs('admin.rekap') ? 'active' : '' }}">Rekap</a></li>
-        </ul>
+    {{-- Header / Navbar Admin --}}
+    @include('partials.navbar-admin')
 
-        <div class="nav-auth">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-outline">Logout Admin</button>
-            </form>
-        </div>
-    </div>
-</nav>
+    {{-- Main Content --}}
+    <main class="admin-main-content">
+        @yield('content')
+    </main>
+
+    {{-- Footer Admin --}}
+    @include('partials.footer-admin')
+
+    @stack('scripts')
+</body>
+</html>

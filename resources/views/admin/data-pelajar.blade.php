@@ -3,83 +3,110 @@
 @section('title', 'EDUSAFE - Data Pelajar')
 
 @section('content')
-<div class="container">
-    <div class="flex-between" style="margin-bottom: 25px;">
-        <div>
-            <h1 style="color: var(--primary); margin-bottom: 5px;">Manajemen Data Pelajar</h1>
-            <p style="color: var(--text-muted);">Kelola informasi akun, progres modul, dan status keaktifan siswa EDUSAFE.</p>
-        </div>
-        <button class="btn">+ Tambah Pelajar Baru</button>
-    </div>
-
-    <!-- Tabel Ringkasan Pelajar -->
-    <div class="card">
-        <div class="flex-between" style="margin-bottom: 20px; gap: 15px;">
-            <input type="text" placeholder="🔍 Cari nama atau NISN/Email..." style="padding: 10px 15px; border: 1px solid var(--border); border-radius: 6px; width: 300px;">
+<div class="admin-page-wrapper">
+    <div class="admin-container">
+        
+        <!-- Header Halaman -->
+        <div class="flex-between" style="margin-bottom: 25px;">
             <div>
-                <select style="padding: 10px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted);">
-                    <option value="">Semua Status</option>
-                    <option value="aktif">Aktif</option>
-                    <option value="nonaktif">Non-Aktif</option>
-                </select>
+                <h1 class="admin-card-title" style="font-size: 24px; color: #00288A; margin-bottom: 6px;">Manajemen Data Pelajar</h1>
+                <p style="color: #64748B; font-size: 14px; margin: 0;">Kelola informasi akun, progres modul, dan status keaktifan siswa EDUSAFE.</p>
+            </div>
+            <button class="btn-primary-admin">+ Tambah Pelajar Baru</button>
+        </div>
+
+        <!-- Tabel Ringkasan Pelajar dalam Card -->
+        <div class="admin-card">
+            <!-- Filter & Search Bar -->
+            <div class="flex-between" style="margin-bottom: 20px; gap: 15px;">
+                <input type="text" placeholder="🔍 Cari nama, NISN, atau email..." style="padding: 10px 14px; border: 1px solid #CBD5E1; border-radius: 8px; width: 320px; font-size: 14px;">
+                <div>
+                    <select style="padding: 10px 14px; border: 1px solid #CBD5E1; border-radius: 8px; color: #475569; font-size: 14px; background: #FFFFFF;">
+                        <option value="">Semua Status</option>
+                        <option value="aktif">Aktif</option>
+                        <option value="nonaktif">Inaktif</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tabel Data -->
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pelajar</th>
+                            <th>ID / Email</th>
+                            <th>Modul Selesai</th>
+                            <th>Rerata Nilai</th>
+                            <th>Status</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Row 1 -->
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="user-avatar-circle">RP</div>
+                                    <strong style="color: #0F172A;">Rizky Pratama</strong>
+                                </div>
+                            </td>
+                            <td style="color: #64748B;">
+                                EDU-2024-089<br>
+                                <small style="color: #94A3B8;">rizky@gmail.com</small>
+                            </td>
+                            <td><strong>12</strong> / 15 Modul</td>
+                            <td><strong style="color: #00288A; font-size: 15px;">88%</strong></td>
+                            <td><span class="badge-status-green">Aktif</span></td>
+                            <td style="text-align: center;">
+                                <a href="{{ route('admin.evaluasi') }}" class="btn-cancel" style="padding: 6px 14px; font-size: 12px; text-decoration: none;">Evaluasi</a>
+                            </td>
+                        </tr>
+
+                        <!-- Row 2 -->
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="user-avatar-circle">JD</div>
+                                    <strong style="color: #0F172A;">Jane Doe</strong>
+                                </div>
+                            </td>
+                            <td style="color: #64748B;">
+                                EDU-2024-090<br>
+                                <small style="color: #94A3B8;">jane.doe@gmail.com</small>
+                            </td>
+                            <td><strong>5</strong> / 15 Modul</td>
+                            <td><strong style="color: #00288A; font-size: 15px;">75%</strong></td>
+                            <td><span class="badge-status-green">Aktif</span></td>
+                            <td style="text-align: center;">
+                                <a href="{{ route('admin.evaluasi') }}" class="btn-cancel" style="padding: 6px 14px; font-size: 12px; text-decoration: none;">Evaluasi</a>
+                            </td>
+                        </tr>
+
+                        <!-- Row 3 -->
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="user-avatar-circle">AS</div>
+                                    <strong style="color: #0F172A;">Andi Saputra</strong>
+                                </div>
+                            </td>
+                            <td style="color: #64748B;">
+                                EDU-2024-091<br>
+                                <small style="color: #94A3B8;">andi@gmail.com</small>
+                            </td>
+                            <td><strong>8</strong> / 15 Modul</td>
+                            <td><strong style="color: #00288A; font-size: 15px;">82%</strong></td>
+                            <td><span class="badge-status-red" style="background: #FEF3C7; color: #92400E;">Inaktif 3 Hari</span></td>
+                            <td style="text-align: center;">
+                                <a href="{{ route('admin.evaluasi') }}" class="btn-cancel" style="padding: 6px 14px; font-size: 12px; text-decoration: none;">Evaluasi</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                <thead>
-                    <tr style="border-bottom: 2px solid var(--border); color: var(--text-muted); text-align: left;">
-                        <th style="padding: 15px;">Pelajar</th>
-                        <th style="padding: 15px;">ID / Email</th>
-                        <th style="padding: 15px;">Modul Selesai</th>
-                        <th style="padding: 15px;">Rerata Nilai</th>
-                        <th style="padding: 15px;">Status</th>
-                        <th style="padding: 15px; text-align: center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 15px; display: flex; align-items: center; gap: 10px;">
-                            <div style="background: #EBF3FF; color: var(--primary); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">RP</div>
-                            <strong>Rizky Pratama</strong>
-                        </td>
-                        <td style="padding: 15px; color: var(--text-muted);">EDU-2024-089<br><small>rizky@gmail.com</small></td>
-                        <td style="padding: 15px;">12 / 15 Modul</td>
-                        <td style="padding: 15px; font-weight: bold; color: var(--primary);">88%</td>
-                        <td style="padding: 15px;"><span class="badge" style="background: #D1FAE5; color: #065F46;">Aktif</span></td>
-                        <td style="padding: 15px; text-align: center;">
-                            <a href="{{ url('/evaluasi') }}" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">Evaluasi</a>
-                        </td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 15px; display: flex; align-items: center; gap: 10px;">
-                            <div style="background: #EBF3FF; color: var(--primary); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">JD</div>
-                            <strong>Jane Doe</strong>
-                        </td>
-                        <td style="padding: 15px; color: var(--text-muted);">EDU-2024-090<br><small>jane.doe@gmail.com</small></td>
-                        <td style="padding: 15px;">5 / 15 Modul</td>
-                        <td style="padding: 15px; font-weight: bold; color: var(--primary);">75%</td>
-                        <td style="padding: 15px;"><span class="badge" style="background: #D1FAE5; color: #065F46;">Aktif</span></td>
-                        <td style="padding: 15px; text-align: center;">
-                            <a href="{{ url('/evaluasi') }}" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">Evaluasi</a>
-                        </td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 15px; display: flex; align-items: center; gap: 10px;">
-                            <div style="background: #EBF3FF; color: var(--primary); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">AS</div>
-                            <strong>Andi Saputra</strong>
-                        </td>
-                        <td style="padding: 15px; color: var(--text-muted);">EDU-2024-091<br><small>andi@gmail.com</small></td>
-                        <td style="padding: 15px;">8 / 15 Modul</td>
-                        <td style="padding: 15px; font-weight: bold; color: var(--primary);">82%</td>
-                        <td style="padding: 15px;"><span class="badge" style="background: #FEF3C7; color: #92400E;">Inaktif 3 Hari</span></td>
-                        <td style="padding: 15px; text-align: center;">
-                            <a href="{{ url('/evaluasi') }}" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">Evaluasi</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
 </div>
 @endsection
