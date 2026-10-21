@@ -168,7 +168,12 @@ class EduSafeDatabaseSeeder extends Seeder
             if (! $exists) {
                 DB::table('soal')->insert(array_merge($soal, [
                     'idkuis' => 1,
+                    'idmateri' => (($soal['idsoal'] - 1) % 6) + 1,
                 ]));
+            } elseif (\Illuminate\Support\Facades\Schema::hasColumn('soal', 'idmateri') && empty($exists->idmateri)) {
+                DB::table('soal')->where('idsoal', $soal['idsoal'])->update([
+                    'idmateri' => (($soal['idsoal'] - 1) % 6) + 1,
+                ]);
             }
         }
     }

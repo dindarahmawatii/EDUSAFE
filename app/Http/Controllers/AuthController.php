@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -109,10 +110,14 @@ class AuthController extends Controller
         }
 
         // Jika Login Gagal -> Tambahkan Hit Limiter
-        RateLimiter::hit($throttleKey, 60);
+        RateLimiter::hit($throttleKey, 900); // 15 menit
         $attempts = RateLimiter::attempts($throttleKey);
 
         if ($attempts >= 5 || RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            // Mulai masa lockout 15 menit sejak percobaan gagal ke-5.
+            $cleanKey = RateLimiter::cleanRateLimiterKey($throttleKey);
+            Cache::put($cleanKey.':timer', now()->addMinutes(15)->getTimestamp(), 900);
+
             $seconds = RateLimiter::availableIn($throttleKey);
             $minutes = max(1, (int) ceil($seconds / 60));
 

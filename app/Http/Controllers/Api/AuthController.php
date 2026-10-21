@@ -78,13 +78,13 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
-            RateLimiter::hit($throttleKey, 60);
+            RateLimiter::hit($throttleKey, 900); // 15 menit
 
             $attempts = RateLimiter::attempts($throttleKey);
 
             if ($attempts >= 5) {
                 $cleanKey = RateLimiter::cleanRateLimiterKey($throttleKey);
-                Cache::put($cleanKey.':timer', now()->addMinutes(1)->getTimestamp(), 60);
+                Cache::put($cleanKey.':timer', now()->addMinutes(15)->getTimestamp(), 900);
 
                 $seconds = RateLimiter::availableIn($throttleKey);
                 $minutes = max(1, (int) ceil($seconds / 60));

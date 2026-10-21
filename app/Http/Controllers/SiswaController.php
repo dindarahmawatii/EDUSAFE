@@ -21,7 +21,7 @@ class SiswaController extends Controller
     public function home(): View
     {
         try {
-            $materiList = Materi::all();
+            $materiList = Materi::orderBy((new Materi)->getKeyName())->limit(6)->get();
         } catch (\Throwable $e) {
             $materiList = collect();
         }
@@ -35,7 +35,7 @@ class SiswaController extends Controller
     public function materi(): View
     {
         try {
-            $materiList = Materi::all();
+            $materiList = Materi::orderBy((new Materi)->getKeyName())->get();
         } catch (\Throwable $e) {
             $materiList = collect();
         }
@@ -239,7 +239,11 @@ class SiswaController extends Controller
     private function loadSoalFromDatabase(int $materiId = 1): array
     {
         try {
-            $soalRows = DB::table('soal')->get();
+            $soalQuery = DB::table('soal');
+            if (\Illuminate\Support\Facades\Schema::hasColumn('soal', 'idmateri')) {
+                $soalQuery->where('idmateri', $materiId);
+            }
+            $soalRows = $soalQuery->get();
             if ($soalRows->isNotEmpty()) {
                 $result = [];
                 foreach ($soalRows as $index => $row) {
@@ -265,7 +269,12 @@ class SiswaController extends Controller
             // Gunakan fallback
         }
 
-        return $this->getDaftarSoal($materiId);
+        $fallbackSoal = $this->getDaftarSoal($materiId);
+        if (\Illuminate\Support\Facades\Schema::hasTable('soal') && \Illuminate\Support\Facades\Schema::hasColumn('soal', 'idmateri')) {
+            $fallbackSoal = array_filter($fallbackSoal, fn ($soal) => (($soal['id'] - 1) % 6) + 1 === $materiId);
+        }
+
+        return $fallbackSoal;
     }
 
     /**
