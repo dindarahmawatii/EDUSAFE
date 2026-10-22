@@ -124,7 +124,7 @@ class SiswaController extends Controller
             }
         }
 
-        $skor = $totalSoal > 0 ? (int) round(($benar / $totalSoal) * 100) : 100;
+        $skor = $totalSoal > 0 ? (int) round(($benar / $totalSoal) * 100) : 0;
 
         $materi = null;
         try {
@@ -140,10 +140,12 @@ class SiswaController extends Controller
         // Simpan hasil pengerjaan kuis ke tabel mengerjakan_kuis & evaluasi_dan_rekap di database
         if (Auth::check()) {
             try {
-                $idKuis = 1;
-                $kuisRow = DB::table('kuis')->first();
-                if ($kuisRow) {
-                    $idKuis = $kuisRow->idkuis ?? 1;
+                $idKuis = DB::table('soal')->where('idmateri', $materiId)->value('idkuis');
+                if (!$idKuis) {
+                    $idKuis = DB::table('kuis')->value('idkuis');
+                }
+                if (!$idKuis) {
+                    throw new \RuntimeException('Kuis belum tersedia untuk materi ini.');
                 }
 
                 $idMengerjakan = DB::table('mengerjakan_kuis')->insertGetId([
@@ -238,184 +240,34 @@ class SiswaController extends Controller
      */
     private function loadSoalFromDatabase(int $materiId = 1): array
     {
-        try {
-            $soalQuery = DB::table('soal');
-            if (\Illuminate\Support\Facades\Schema::hasColumn('soal', 'idmateri')) {
-                $soalQuery->where('idmateri', $materiId);
-            }
-            $soalRows = $soalQuery->get();
-            if ($soalRows->isNotEmpty()) {
-                $result = [];
-                foreach ($soalRows as $index => $row) {
-                    $num = $index + 1;
-                    $result[$num] = [
-                        'id' => $num,
-                        'pertanyaan' => $row->pertanyaan,
-                        'opsi' => [
-                            'A' => $row->pilihan_a,
-                            'B' => $row->pilihan_b,
-                            'C' => $row->pilihan_c,
-                            'D' => $row->pilihan_d,
-                        ],
-                        'jawaban_benar' => $row->jawaban_benar,
-                        'tips' => 'Perhatikan kata kunci pertanyaan untuk memilih jawaban yang tepat.',
-                        'modul_terkait' => 'Modul ' . str_pad((string) $materiId, 2, '0', STR_PAD_LEFT) . ' - Ancaman & Mitigasi Malware',
-                    ];
-                }
-
-                return $result;
-            }
-        } catch (\Throwable $e) {
-            // Gunakan fallback
+        if (!DB::getSchemaBuilder()->hasTable('soal') || !DB::getSchemaBuilder()->hasColumn('soal', 'idmateri')) {
+            return [];
         }
 
-        $fallbackSoal = $this->getDaftarSoal($materiId);
-        if (\Illuminate\Support\Facades\Schema::hasTable('soal') && \Illuminate\Support\Facades\Schema::hasColumn('soal', 'idmateri')) {
-            $fallbackSoal = array_filter($fallbackSoal, fn ($soal) => (($soal['id'] - 1) % 6) + 1 === $materiId);
+        $soalRows = DB::table('soal')
+            ->where('idmateri', $materiId)
+            ->orderBy('idsoal')
+            ->get();
+
+        $result = [];
+        foreach ($soalRows as $index => $row) {
+            $num = $index + 1;
+            $result[$num] = [
+                'id' => $row->idsoal ?? $num,
+                'pertanyaan' => $row->pertanyaan ?? '',
+                'opsi' => [
+                    'A' => $row->pilihan_a ?? '',
+                    'B' => $row->pilihan_b ?? '',
+                    'C' => $row->pilihan_c ?? '',
+                    'D' => $row->pilihan_d ?? '',
+                ],
+                'jawaban_benar' => $row->jawaban_benar ?? '',
+                'tips' => $row->pembahasan ?? 'Baca setiap pilihan dengan cermat sebelum menentukan jawaban.',
+                'modul_terkait' => 'Materi #' . $materiId,
+            ];
         }
 
-        return $fallbackSoal;
-    }
-
-    /**
-     * Mengambil bank soal kuis resmi.
-     *
-     * @return array<int, array{id: int, pertanyaan: string, opsi: array<string, string>, jawaban_benar: string, tips: string, modul_terkait: string}>
-     */
-    private function getDaftarSoal(int $materiId = 1): array
-    {
-        return [
-            1 => [
-                'id' => 1,
-                'pertanyaan' => 'Apa definisi yang paling tepat mengenai Malware (Malicious Software) dalam konteks keamanan siber?',
-                'opsi' => [
-                    'A' => 'Perangkat lunak berbahaya yang sengaja dirancang untuk merusak, mencuri data, atau mengeksploitasi sistem tanpa izin.',
-                    'B' => 'Aplikasi resmi dari vendor sistem operasi untuk memperbarui patch keamanan perangkat.',
-                    'C' => 'Software pengolah dokumen digital yang berjalan di lingkungan cloud.',
-                    'D' => 'Protokol jaringan standar untuk meningkatkan kecepatan akses internet.',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Perhatikan kata kunci "sengaja dirancang untuk merusak" dan "tanpa izin pengguna".',
-                'modul_terkait' => 'Modul 01: Pengenalan Malware & Ancaman Siber',
-            ],
-            2 => [
-                'id' => 2,
-                'pertanyaan' => 'Jenis malware yang mampu mereplikasi dirinya secara mandiri dan menyebar melalui jaringan tanpa interaksi pengguna adalah...',
-                'opsi' => [
-                    'A' => 'Worm',
-                    'B' => 'Trojan Horse',
-                    'C' => 'Adware',
-                    'D' => 'Spyware',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Worm memiliki karakteristik unik yaitu menyebar otomatis melalui celah port jaringan tanpa butuh file inang.',
-                'modul_terkait' => 'Modul 02: Klasifikasi Jenis Malware',
-            ],
-            3 => [
-                'id' => 3,
-                'pertanyaan' => 'Malware yang menyamarkan dirinya sebagai aplikasi resmi atau berguna untuk menipu korban agar menginstalnya disebut...',
-                'opsi' => [
-                    'A' => 'Trojan Horse',
-                    'B' => 'Ransomware',
-                    'C' => 'Rootkit',
-                    'D' => 'Keylogger',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Konsepnya mengadopsi kisah Kuda Troya: tampak aman dari luar namun membawa ancaman tersembunyi.',
-                'modul_terkait' => 'Modul 02: Klasifikasi Jenis Malware',
-            ],
-            4 => [
-                'id' => 4,
-                'pertanyaan' => 'Manakah dari berikut ini yang paling akurat mendeskripsikan ancaman "Ransomware"?',
-                'opsi' => [
-                    'A' => 'Malware yang mengenkripsi file korban dan menuntut uang tebusan untuk mendapatkan kunci dekripsi.',
-                    'B' => 'Program yang menampilkan iklan pop-up terus-menerus di web browser.',
-                    'C' => 'Tool pemantau jaringan yang digunakan administrator untuk audit keamanan.',
-                    'D' => 'Script otomatis untuk membersihkan temporary files di hard disk.',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Ransomware berfokus pada pemerasan finansial melalui enkripsi paksa aset data penting.',
-                'modul_terkait' => 'Modul 07: Penanganan Serangan Ransomware',
-            ],
-            5 => [
-                'id' => 5,
-                'pertanyaan' => 'Malware tersembunyi yang merekam setiap ketukan tombol keyboard untuk mencuri kredensial akun dan password adalah...',
-                'opsi' => [
-                    'A' => 'Keylogger',
-                    'B' => 'Bootkit',
-                    'C' => 'Logic Bomb',
-                    'D' => 'Worm',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Sesuai namanya, Keylogger mencatat setiap stroke atau penekanan tombol pada keyboard secara berkala.',
-                'modul_terkait' => 'Modul 02: Klasifikasi Jenis Malware',
-            ],
-            6 => [
-                'id' => 6,
-                'pertanyaan' => 'Metode rekayasa sosial (Social Engineering) yang paling sering digunakan untuk menyebarkan malware melalui pesan atau email palsu adalah...',
-                'opsi' => [
-                    'A' => 'Phishing',
-                    'B' => 'SQL Injection',
-                    'C' => 'Buffer Overflow',
-                    'D' => 'Cross-Site Scripting (XSS)',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Phishing memanfaatkan manipulasi psikologis agar korban membuka lampiran atau link berbahaya.',
-                'modul_terkait' => 'Modul 03: Vektor Serangan & Mekanisme Infeksi',
-            ],
-            7 => [
-                'id' => 7,
-                'pertanyaan' => 'Apa langkah mitigasi pertama yang wajib dilakukan saat sebuah komputer terindikasi kuat terinfeksi malware aktif?',
-                'opsi' => [
-                    'A' => 'Segera putuskan koneksi jaringan (LAN/Wi-Fi) untuk mencegah transmisi lateral ke komputer lain.',
-                    'B' => 'Mengirim salinan file terinfeksi ke rekan kerja melalui chat.',
-                    'C' => 'Membiarkan perangkat tetap terhubung untuk menunggu instruksi hacker.',
-                    'D' => 'Menghapus folder System32 secara manual.',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Isolasi jaringan adalah tindakan darurat utama dalam Incident Response untuk menghentikan penyebaran.',
-                'modul_terkait' => 'Modul 07: Penanganan & Response Insiden',
-            ],
-            8 => [
-                'id' => 8,
-                'pertanyaan' => 'Teknik analisis malware di mana sampel dieksekusi di dalam lingkungan terisolasi untuk dipantau perilakunya disebut...',
-                'opsi' => [
-                    'A' => 'Analisis Dinamis (Dynamic Analysis / Sandboxing)',
-                    'B' => 'Analisis Statis (Static Analysis)',
-                    'C' => 'Reverse Engineering Manual',
-                    'D' => 'Code Review Pasif',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Kata kuncinya adalah "dieksekusi langsung" di lingkungan Sandbox untuk mengamati aktivitasnya.',
-                'modul_terkait' => 'Modul 05: Analisis Dinamis & Lingkungan Sandbox',
-            ],
-            9 => [
-                'id' => 9,
-                'pertanyaan' => 'Tindakan pencegahan paling efektif untuk meminimalisir eksploitasi kerentanan keamanan oleh malware adalah...',
-                'opsi' => [
-                    'A' => 'Rutin menerapkan pembaruan (patch) sistem operasi dan perangkat lunak secara berkala.',
-                    'B' => 'Mematikan fitur proteksi antivirus agar performa komputer meningkat.',
-                    'C' => 'Menggunakan password yang sama untuk seluruh akun layanan.',
-                    'D' => 'Menginstal aplikasi bajakan dari situs tidak resmi.',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Patching menutup celah keamanan yang belum diperbaiki pada sistem Anda.',
-                'modul_terkait' => 'Modul 09: Best Practices & Defense in Depth',
-            ],
-            10 => [
-                'id' => 10,
-                'pertanyaan' => 'Strategi pengamanan dengan menerapkan beberapa lapisan perlindungan di berbagai tingkatan sistem dikenal sebagai...',
-                'opsi' => [
-                    'A' => 'Defense in Depth',
-                    'B' => 'Single Point of Protection',
-                    'C' => 'Open Trust Architecture',
-                    'D' => 'Zero Tolerance Network',
-                ],
-                'jawaban_benar' => 'A',
-                'tips' => 'Defense in Depth memastikan jika satu pertahanan jebol, masih ada lapisan pertahanan berikutnya.',
-                'modul_terkait' => 'Modul 09: Best Practices & Defense in Depth',
-            ],
-        ];
+        return $result;
     }
 
     /**

@@ -162,9 +162,9 @@
                 <label style="font-size: 13px; font-weight: 700; color: #334155;">Filter Berdasarkan Materi:</label>
                 <select id="filterMateri" onchange="renderTabelKuis()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #CBD5E1; background: #FFF; font-size: 13px; min-width: 250px;">
                     <option value="SEMUA">-- Semua Materi Pembelajaran --</option>
-                    <option value="Pengantar Malware Analysis">Pengantar Malware Analysis</option>
-                    <option value="Static Analysis Techniques">Static Analysis Techniques</option>
-                    <option value="Behavioral Analysis">Behavioral Analysis</option>
+                    @foreach($materiList as $materi)
+                        <option value="{{ $materi->getKey() }}">{{ $materi->judul ?? $materi->namamateri }}</option>
+                    @endforeach
                 </select>
                 <span id="badgeTotalSoal" class="badge-status-blue" style="font-size: 12px;">Total: 0 Soal</span>
             </div>
@@ -241,7 +241,7 @@
             <span class="modal-close" onclick="toggleModalKuis(false)">&times;</span>
         </div>
 
-        <form id="formKuis" action="#" method="POST" onsubmit="handleFormKuisSubmit(event)">
+        <form id="formKuis" action="{{ route('admin.kuis.storeAjax') }}" method="POST" onsubmit="handleFormKuisSubmit(event)">
             @csrf
             <input type="hidden" id="editIndex" value="-1">
             
@@ -250,9 +250,9 @@
                 <label>Pilih Modul / Materi Kuis</label>
                 <select name="materi_id" id="materi_id" required style="width: 100%; padding: 10px; border: 1px solid #CBD5E1; border-radius: 8px; background: #FFF;">
                     <option value="">-- Pilih Materi Pembelajaran --</option>
-                    <option value="Pengantar Malware Analysis">Pengantar Malware Analysis</option>
-                    <option value="Static Analysis Techniques">Static Analysis Techniques</option>
-                    <option value="Behavioral Analysis">Behavioral Analysis</option>
+                    @foreach($materiList as $materi)
+                        <option value="{{ $materi->getKey() }}">{{ $materi->judul ?? $materi->namamateri }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -300,231 +300,163 @@
 </div>
 
 <script>
-    // Data Dummy Kuis Awal
-    let daftarSoalKuis = [
-        {
-            materi: "Pengantar Malware Analysis",
-            pertanyaan: "Apa fungsi utama dari teknik Dynamic Analysis dalam analisis malware?",
-            opsi_a: "Memeriksa baris kode source tanpa mengesksekusi file",
-            opsi_b: "Mengamati perilaku malware secara langsung saat dijalankan dalam lingkungan terisolasi (Sandbox)",
-            opsi_c: "Dekripsi file yang telah terinfeksi ransomware",
-            opsi_d: "Menghapus otomatis virus dari sistem registri Windows",
-            kunci: "B",
-            pembahasan: "Dynamic Analysis dilakukan dengan menjalankan file malware di dalam sistem terisolasi (sandbox)."
-        },
-        {
-            materi: "Pengantar Malware Analysis",
-            pertanyaan: "Metode mana yang digunakan untuk mengidentifikasi malware tanpa mengeksekusi kodenya?",
-            opsi_a: "Behavioral Analysis",
-            opsi_b: "Static Analysis",
-            opsi_c: "Dynamic Analysis",
-            opsi_d: "Memory Analysis",
-            kunci: "B",
-            pembahasan: "Static Analysis dilakukan dengan memeriksa struktur file, string, dan header tanpa menjalankannya."
-        },
-        {
-            materi: "Static Analysis Techniques",
-            pertanyaan: "Jenis malware apa yang mereplikasi dirinya sendiri melalui jaringan tanpa bantuan interaksi manusia?",
-            opsi_a: "Trojan Horse",
-            opsi_b: "Worm",
-            opsi_c: "Adware",
-            opsi_d: "Spyware",
-            kunci: "B",
-            pembahasan: "Worm dapat menyebar dan mereplikasi dirinya secara mandiri memanfaatkan celah keamanan jaringan."
-        }
-    ];
+    // Data tabel diambil dari database; tidak ada lagi array soal hardcode.
+    let daftarSoalKuis = @json($soalKuis ?? []);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+    const storeSoalUrl = @json(route('admin.kuis.storeAjax'));
+    const updateSoalUrl = @json(url('/admin/kuis'));
+    const deleteSoalUrl = @json(url('/admin/kuis'));
 
-    // Fungsi Render Tabel dengan Filter Materi & Penomoran Urut per Materi
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        }[char]));
+    }
+
     function renderTabelKuis() {
-        let tbody = document.getElementById('tbodySoalKuis');
-        let selectedMateri = document.getElementById('filterMateri').value;
+        const tbody = document.getElementById('tbodySoalKuis');
+        const selectedMateri = document.getElementById('filterMateri').value;
         tbody.innerHTML = '';
-
-        let filteredData = daftarSoalKuis.filter(soal => {
-            return selectedMateri === "SEMUA" || soal.materi === selectedMateri;
-        });
-
+        const filteredData = daftarSoalKuis.filter(soal => selectedMateri === 'SEMUA' || String(soal.materi_id) === String(selectedMateri));
         document.getElementById('badgeTotalSoal').innerText = `Total: ${filteredData.length} Soal`;
 
-        if(filteredData.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="table-empty">
-                        Belum ada soal kuis untuk materi ini. Silakan klik tombol "+ Tambah Soal Kuis" di atas.
-                    </td>
-                </tr>
-            `;
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="table-empty">Belum ada soal kuis untuk materi ini. Silakan klik tombol "+ Tambah Soal Kuis" di atas.</td></tr>`;
             return;
         }
 
         filteredData.forEach((soal, index) => {
-            let originalIndex = daftarSoalKuis.indexOf(soal);
-
-            let row = `
-                <tr>
-                    <td><strong>Soal #${index + 1}</strong></td>
-                    <td><span class="badge-status-blue">${soal.materi}</span></td>
-                    <td><strong>${soal.pertanyaan.length > 45 ? soal.pertanyaan.substring(0, 45) + '...' : soal.pertanyaan}</strong></td>
-                    <td><span class="badge-status-green">Opsi ${soal.kunci}</span></td>
-                    <td>
-                        <div style="display: flex; gap: 8px;">
-                            <button type="button" class="btn-cancel" style="padding: 4px 10px; font-size: 11px;" onclick="editSoal(${originalIndex})">Edit</button>
-                            <button type="button" class="btn-cancel" style="padding: 4px 10px; font-size: 11px; color: #EF4444; border-color: #FCA5A5;" onclick="hapusSoal(${originalIndex})">Hapus</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>Soal #${index + 1}</strong></td>
+                <td><span class="badge-status-blue">${escapeHtml(soal.materi)}</span></td>
+                <td><strong>${escapeHtml(soal.pertanyaan.length > 45 ? soal.pertanyaan.substring(0, 45) + '...' : soal.pertanyaan)}</strong></td>
+                <td><span class="badge-status-green">Opsi ${escapeHtml(soal.kunci)}</span></td>
+                <td><div style="display:flex;gap:8px;">
+                    <button type="button" class="btn-cancel" style="padding:4px 10px;font-size:11px;" data-edit-id="${escapeHtml(soal.id)}">Edit</button>
+                    <button type="button" class="btn-cancel" style="padding:4px 10px;font-size:11px;color:#EF4444;border-color:#FCA5A5;" data-delete-id="${escapeHtml(soal.id)}">Hapus</button>
+                </div></td>`;
+            row.querySelector('[data-edit-id]').addEventListener('click', () => editSoal(soal.id));
+            row.querySelector('[data-delete-id]').addEventListener('click', () => hapusSoal(soal.id));
+            tbody.appendChild(row);
         });
     }
 
-    // Modal Toggles
     function toggleModal(show) {
         document.getElementById('modalTambahMateri').style.display = show ? 'flex' : 'none';
     }
-
     function toggleModalKuis(show) {
         document.getElementById('modalTambahKuis').style.display = show ? 'flex' : 'none';
     }
 
-    // Buka Modal Tambah Soal Kuis Baru
     function bukaModalTambahKuis() {
-        document.getElementById('editIndex').value = "-1";
-        document.getElementById('modalKuisTitle').innerText = "Tambah Soal Kuis";
-        document.getElementById('labelNomorSoal').innerText = `Input Soal Beruntun`;
-        document.getElementById('btnTambahBeruntun').style.display = "inline-block";
-        document.getElementById('btnSimpanText').innerText = "Selesai & Simpan Kuis";
+        document.getElementById('editIndex').value = '-1';
+        document.getElementById('modalKuisTitle').innerText = 'Tambah Soal Kuis';
+        document.getElementById('labelNomorSoal').innerText = 'Input Soal Beruntun';
+        document.getElementById('btnTambahBeruntun').style.display = 'inline-block';
+        document.getElementById('btnSimpanText').innerText = 'Selesai & Simpan Kuis';
         document.getElementById('formKuis').reset();
         document.getElementById('materi_id').disabled = false;
         toggleModalKuis(true);
     }
 
-    // Tombol + Soal Berikutnya (Simpan sementara & lanjut ke soal berikutnya)
-    function simpanDanLanjut() {
-        let materi = document.getElementById('materi_id').value;
-        let pertanyaan = document.getElementById('pertanyaan').value;
-        let kunci = document.getElementById('kunci_jawaban').value;
-
-        if(!materi || !pertanyaan || !kunci) {
-            alert("Mohon lengkapi Materi, Pertanyaan, dan Kunci Jawaban terlebih dahulu!");
-            return;
-        }
-
-        // Masukkan ke array dummy
-        daftarSoalKuis.push({
-            materi: materi,
-            pertanyaan: pertanyaan,
-            opsi_a: document.getElementById('opsi_a').value,
-            opsi_b: document.getElementById('opsi_b').value,
-            opsi_c: document.getElementById('opsi_c').value,
-            opsi_d: document.getElementById('opsi_d').value,
-            kunci: kunci,
-            pembahasan: document.getElementById('pembahasan').value
-        });
-
-        renderTabelKuis();
-        
-        // Kunci dropdown materi agar tidak berubah di tengah sesi input soal beruntun
-        let selectedMateriValue = materi;
-        document.getElementById('materi_id').disabled = true;
-
-        alert(`Soal berhasil dimasukkan! Silakan lanjutkan isi soal berikutnya.`);
-
-        // Reset form input soal saja
-        document.getElementById('pertanyaan').value = '';
-        document.getElementById('opsi_a').value = '';
-        document.getElementById('opsi_b').value = '';
-        document.getElementById('opsi_c').value = '';
-        document.getElementById('opsi_d').value = '';
-        document.getElementById('kunci_jawaban').value = '';
-        document.getElementById('pembahasan').value = '';
-        
-        // Kembalikan nilai materi yang terkunci
-        document.getElementById('materi_id').value = selectedMateriValue;
+    function dataFormKuis() {
+        return {
+            materi_id: document.getElementById('materi_id').value,
+            pertanyaan: document.getElementById('pertanyaan').value.trim(),
+            opsi_a: document.getElementById('opsi_a').value.trim(),
+            opsi_b: document.getElementById('opsi_b').value.trim(),
+            opsi_c: document.getElementById('opsi_c').value.trim(),
+            opsi_d: document.getElementById('opsi_d').value.trim(),
+            kunci_jawaban: document.getElementById('kunci_jawaban').value,
+            pembahasan: document.getElementById('pembahasan').value.trim()
+        };
     }
 
-    // Fungsi Edit Soal
-    function editSoal(index) {
-        let soal = daftarSoalKuis[index];
-        
-        document.getElementById('editIndex').value = index;
-        document.getElementById('modalKuisTitle').innerText = "Edit Soal Kuis";
-        document.getElementById('labelNomorSoal').innerText = `Editing Soal Index ke-${index + 1}`;
-        document.getElementById('btnTambahBeruntun').style.display = "none"; // Sembunyikan tombol + saat edit
-        document.getElementById('btnSimpanText').innerText = "Update Soal";
-        document.getElementById('materi_id').disabled = false;
+    async function requestJson(url, method, data = null) {
+        const options = { method, headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' } };
+        if (data) {
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(data);
+        }
+        const response = await fetch(url, options);
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            const message = result.message || (result.errors ? Object.values(result.errors).flat().join('\n') : 'Permintaan gagal.');
+            throw new Error(message);
+        }
+        return result;
+    }
 
-        document.getElementById('materi_id').value = soal.materi;
+    async function simpanDanLanjut() {
+        const data = dataFormKuis();
+        if (!document.getElementById('formKuis').reportValidity()) return;
+        try {
+            const saved = await requestJson(storeSoalUrl, 'POST', data);
+            const materiTerkunci = data.materi_id;
+            const materiLabel = document.querySelector(`#materi_id option[value="${CSS.escape(String(materiTerkunci))}"]`)?.textContent || 'Materi';
+            daftarSoalKuis.push({ id: saved.id, materi_id: materiTerkunci, materi: materiLabel, pertanyaan: data.pertanyaan, opsi_a: data.opsi_a, opsi_b: data.opsi_b, opsi_c: data.opsi_c, opsi_d: data.opsi_d, kunci: data.kunci_jawaban, pembahasan: data.pembahasan });
+            renderTabelKuis();
+            document.getElementById('materi_id').value = materiTerkunci;
+            document.getElementById('materi_id').disabled = true;
+            ['pertanyaan','opsi_a','opsi_b','opsi_c','opsi_d','kunci_jawaban','pembahasan'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('pertanyaan').focus();
+            alert('Soal berhasil disimpan ke database. Silakan lanjutkan soal berikutnya.');
+        } catch (error) { alert(error.message); }
+    }
+
+    async function editSoal(id) {
+        const soal = daftarSoalKuis.find(item => String(item.id) === String(id));
+        if (!soal) return;
+        document.getElementById('editIndex').value = soal.id;
+        document.getElementById('modalKuisTitle').innerText = 'Edit Soal Kuis';
+        document.getElementById('labelNomorSoal').innerText = `Edit Soal #${soal.id}`;
+        document.getElementById('btnTambahBeruntun').style.display = 'none';
+        document.getElementById('btnSimpanText').innerText = 'Update Soal';
+        document.getElementById('materi_id').disabled = false;
+        document.getElementById('materi_id').value = soal.materi_id;
         document.getElementById('pertanyaan').value = soal.pertanyaan;
         document.getElementById('opsi_a').value = soal.opsi_a;
         document.getElementById('opsi_b').value = soal.opsi_b;
         document.getElementById('opsi_c').value = soal.opsi_c;
         document.getElementById('opsi_d').value = soal.opsi_d;
         document.getElementById('kunci_jawaban').value = soal.kunci;
-        document.getElementById('pembahasan').value = soal.pembahasan;
-
+        document.getElementById('pembahasan').value = soal.pembahasan || '';
         toggleModalKuis(true);
     }
 
-    // Fungsi Hapus Soal
-    function hapusSoal(index) {
-        if(confirm(`Apakah Anda yakin ingin menghapus soal ini?`)) {
-            daftarSoalKuis.splice(index, 1);
+    async function hapusSoal(id) {
+        if (!confirm('Apakah Anda yakin ingin menghapus soal ini?')) return;
+        try {
+            await requestJson(`${deleteSoalUrl}/${encodeURIComponent(id)}`, 'DELETE');
+            daftarSoalKuis = daftarSoalKuis.filter(soal => String(soal.id) !== String(id));
             renderTabelKuis();
-        }
+            alert('Soal berhasil dihapus.');
+        } catch (error) { alert(error.message); }
     }
 
-    // Handle Form Submit (Tombol Selesai & Simpan atau Update)
-    function handleFormKuisSubmit(e) {
-        e.preventDefault();
-        
-        let editIdx = parseInt(document.getElementById('editIndex').value);
-        let materi = document.getElementById('materi_id').value;
-        let pertanyaan = document.getElementById('pertanyaan').value;
-        let kunci = document.getElementById('kunci_jawaban').value;
-
-        if(!materi) {
-            alert("Silakan pilih materi terlebih dahulu!");
-            return;
-        }
-
-        if(editIdx > -1) {
-            // Mode Update Data
-            daftarSoalKuis[editIdx] = {
-                materi: materi,
-                pertanyaan: pertanyaan,
-                opsi_a: document.getElementById('opsi_a').value,
-                opsi_b: document.getElementById('opsi_b').value,
-                opsi_c: document.getElementById('opsi_c').value,
-                opsi_d: document.getElementById('opsi_d').value,
-                kunci: kunci,
-                pembahasan: document.getElementById('pembahasan').value
-            };
-            alert("Soal kuis berhasil diperbarui!");
-        } else {
-            // Mode Simpan Final (jika form terakhir diisi lalu klik Selesai & Simpan)
-            if(pertanyaan && kunci) {
-                daftarSoalKuis.push({
-                    materi: materi,
-                    pertanyaan: pertanyaan,
-                    opsi_a: document.getElementById('opsi_a').value,
-                    opsi_b: document.getElementById('opsi_b').value,
-                    opsi_c: document.getElementById('opsi_c').value,
-                    opsi_d: document.getElementById('opsi_d').value,
-                    kunci: kunci,
-                    pembahasan: document.getElementById('pembahasan').value
-                });
+    async function handleFormKuisSubmit(event) {
+        event.preventDefault();
+        const form = document.getElementById('formKuis');
+        if (!form.reportValidity()) return;
+        const id = document.getElementById('editIndex').value;
+        const data = dataFormKuis();
+        try {
+            if (id !== '-1') {
+                await requestJson(`${updateSoalUrl}/${encodeURIComponent(id)}`, 'PUT', data);
+                const target = daftarSoalKuis.find(soal => String(soal.id) === String(id));
+                if (target) Object.assign(target, data, { materi: document.querySelector(`#materi_id option[value="${CSS.escape(String(data.materi_id))}"]`)?.textContent || 'Materi', kunci: data.kunci_jawaban });
+                alert('Soal kuis berhasil diperbarui.');
+            } else if (data.pertanyaan.trim()) {
+                const saved = await requestJson(storeSoalUrl, 'POST', data);
+                daftarSoalKuis.push({ id: saved.id, materi_id: data.materi_id, materi: document.querySelector(`#materi_id option[value="${CSS.escape(String(data.materi_id))}"]`)?.textContent || 'Materi', pertanyaan: data.pertanyaan, opsi_a: data.opsi_a, opsi_b: data.opsi_b, opsi_c: data.opsi_c, opsi_d: data.opsi_d, kunci: data.kunci_jawaban, pembahasan: data.pembahasan });
+                alert('Soal kuis berhasil disimpan ke database.');
             }
-            alert("Kumpulan soal kuis berhasil disimpan secara permanen (Simulasi Dummy)!");
-        }
-
-        renderTabelKuis();
-        toggleModalKuis(false);
+            renderTabelKuis();
+            toggleModalKuis(false);
+        } catch (error) { alert(error.message); }
     }
 
-    // Inisialisasi saat halaman dimuat
-    document.addEventListener("DOMContentLoaded", function() {
-        renderTabelKuis();
-    });
+    document.addEventListener('DOMContentLoaded', renderTabelKuis);
 </script>
 @endsection

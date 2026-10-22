@@ -73,11 +73,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
 
-    Route::prefix('admin')->name('admin.')->group(function () {
-    Route::view('/', 'admin.dashboard')->name('dashboard');
-    
-
-    Route::post('/kuis/store', function() { return back(); })->name('kuis.store');
-    Route::post('/kuis/store-ajax', function() { return response()->json(['success' => true]); })->name('kuis.storeAjax');
-});
+    Route::post('/kuis/store', [AdminController::class, 'storeSoalKuis'])->name('kuis.store');
+    Route::post('/kuis/store-ajax', [AdminController::class, 'storeSoalKuis'])->name('kuis.storeAjax');
+    Route::put('/kuis/{id}', [AdminController::class, 'updateSoalKuis'])->whereNumber('id')->name('kuis.update');
+    Route::delete('/kuis/{id}', [AdminController::class, 'destroySoalKuis'])->whereNumber('id')->name('kuis.destroy');
 });

@@ -78,7 +78,7 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
-            RateLimiter::hit($throttleKey, 900); // 15 menit
+            RateLimiter::hit($throttleKey, 900); 
 
             $attempts = RateLimiter::attempts($throttleKey);
 

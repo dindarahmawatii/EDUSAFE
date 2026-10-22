@@ -20,10 +20,10 @@
             <div>
                <div class="quiz-progress-label">
                    <span>Progress Belajar : {{ $namaModul }}</span>
-                   <strong id="progress-text">1 / {{ count($daftarSoal) }} Soal</strong>
+                   <strong id="progress-text">{{ count($daftarSoal) > 0 ? '1 / ' . count($daftarSoal) . ' Soal' : '0 Soal' }}</strong>
                </div>
                <div class="quiz-progress-track">
-                   <div class="quiz-progress-fill" id="progress-fill-bar" style="width: {{ 100 / count($daftarSoal) }}%;"></div>
+                   <div class="quiz-progress-fill" id="progress-fill-bar" style="width: {{ count($daftarSoal) > 0 ? 100 / count($daftarSoal) : 0 }}%;"></div>
                </div>
             </div>
             <div class="quiz-timer-box" id="timer-display">
@@ -35,6 +35,13 @@
             @csrf
             <input type="hidden" name="materi_id" value="{{ $materiId }}">
 
+            @if(count($daftarSoal) === 0)
+                <div class="quiz-question-card" style="padding: 24px;">
+                    <h2 class="q-title">Belum ada soal untuk materi ini.</h2>
+                    <p>Admin belum menambahkan soal kuis untuk materi yang dipilih. Silakan kembali setelah soal tersedia.</p>
+                    <a class="btn-next" href="{{ route('siswa.materi') }}">Kembali ke Materi</a>
+                </div>
+            @else
             <!-- Grid Utama (Soal & Sidebar Navigasi) -->
             <div class="quiz-main-grid">
                 
@@ -127,6 +134,7 @@
                 </div>
 
             </div>
+            @endif
         </form>
 
         <!-- Dua Card Bawah (Tips Ujian & Materi Terkait Dinamis) -->
