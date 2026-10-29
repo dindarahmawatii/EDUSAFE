@@ -198,7 +198,7 @@
             <span class="modal-close" onclick="toggleModal(false)">&times;</span>
         </div>
 
-        <form action="#" method="POST">
+        <form action="{{ route('admin.materi.store') }}" method="POST">
             @csrf
             
             <div class="form-group">

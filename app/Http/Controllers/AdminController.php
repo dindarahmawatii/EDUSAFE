@@ -61,12 +61,23 @@ class AdminController extends Controller
             'konten'    => 'required|string',
         ]);
 
-        // Tabel MySQL memakai kolom namamateri/konten; kolom lain ditambahkan hanya jika ada.
-        $data = [
-            'namamateri' => $validated['judul'],
-            'kategori'   => $validated['kategori'],
-            'konten'     => $validated['konten'],
-        ];
+        $data = [];
+
+        if (Schema::hasColumn('materi', 'namamateri')) {
+            $data['namamateri'] = $validated['judul'];
+        }
+
+        if (Schema::hasColumn('materi', 'judul')) {
+            $data['judul'] = $validated['judul'];
+        }
+
+        if (Schema::hasColumn('materi', 'kategori')) {
+            $data['kategori'] = $validated['kategori'];
+        }
+
+        if (Schema::hasColumn('materi', 'konten')) {
+            $data['konten'] = $validated['konten'];
+        }
 
         if (Schema::hasColumn('materi', 'deskripsi')) {
             $data['deskripsi'] = $validated['deskripsi'];
@@ -74,6 +85,20 @@ class AdminController extends Controller
 
         if (Schema::hasColumn('materi', 'created_at')) {
             $data['created_at'] = now();
+        }
+
+        if (Schema::hasColumn('materi', 'updated_at')) {
+            $data['updated_at'] = now();
+        }
+
+        if (empty($data)) {
+            $data = [
+                'namamateri' => $validated['judul'],
+                'kategori'   => $validated['kategori'],
+                'deskripsi'  => $validated['deskripsi'],
+                'konten'     => $validated['konten'],
+                'created_at' => now(),
+            ];
         }
 
         DB::table('materi')->insert($data);
