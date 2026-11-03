@@ -30,4 +30,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Accessor untuk inisial nama pengguna (1-2 huruf kapital).
+     */
+    public function getInitialsAttribute(): string
+    {
+        $name = trim($this->name ?? 'User');
+        $words = preg_split('/\s+/', $name);
+        if (count($words) >= 2) {
+            return strtoupper(mb_substr($words[0], 0, 1).mb_substr(end($words), 0, 1));
+        }
+
+        return strtoupper(mb_substr($name, 0, min(2, mb_strlen($name))));
+    }
 }

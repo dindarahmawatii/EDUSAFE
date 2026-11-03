@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Materi;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -37,5 +38,40 @@ class AdminTest extends TestCase
         $this->assertNotNull($materi);
         $this->assertEquals('Keamanan Jaringan & Firewall', $materi->judul);
     }
-}
 
+    public function test_admin_dashboard_displays_synchronized_user_count_and_recent_users(): void
+    {
+        User::factory()->create([
+            'name' => 'Budi Santoso',
+            'email' => 'budi@example.com',
+        ]);
+        User::factory()->create([
+            'name' => 'Siti Aminah',
+            'email' => 'siti@example.com',
+        ]);
+
+        $response = $this->get(route('admin.dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('Total User');
+        $response->assertSee('2'); // total user count
+        $response->assertSee('Budi Santoso');
+        $response->assertSee('budi@example.com');
+        $response->assertSee('Siti Aminah');
+        $response->assertSee('siti@example.com');
+    }
+
+    public function test_admin_data_pelajar_page_displays_users_from_database(): void
+    {
+        User::factory()->create([
+            'name' => 'Ahmad Dahlan',
+            'email' => 'ahmad@example.com',
+        ]);
+
+        $response = $this->get(route('admin.data-pelajar'));
+
+        $response->assertOk();
+        $response->assertSee('Ahmad Dahlan');
+        $response->assertSee('ahmad@example.com');
+    }
+}

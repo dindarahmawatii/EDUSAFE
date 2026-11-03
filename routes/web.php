@@ -53,20 +53,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/nilai', 'nilai')->name('nilai');
         Route::get('/evaluasi', 'evaluasiSiswa')->name('evaluasi-siswa');
         Route::get('/rekap', 'rekap')->name('rekap');
-        
+
         // Rute Review Jawaban Siswa
         Route::view('/review-jawaban', 'siswa.review')->name('review');
     });
 
 });
 
-
 // ==========================================
 // 4. MODUL ADMIN (Bebas Diakses untuk Testing UI)
 // ==========================================
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::view('/data-pelajar', 'admin.data-pelajar')->name('data-pelajar');
+    Route::get('/data-pelajar', [AdminController::class, 'dataPelajar'])->name('data-pelajar');
     Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
     Route::view('/laporan', 'admin.laporan')->name('laporan');
     Route::view('/rekap', 'admin.rekap')->name('rekap');
