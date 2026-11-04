@@ -17,7 +17,7 @@
         <!-- Profil Admin & Logout -->
         <div class="admin-user-area">
             <span class="admin-mode-label">Admin Mode</span>
-            <div class="admin-avatar">AW</div>
+            <div class="admin-avatar">{{ auth()->user()?->initials ?? 'AD' }}</div>
             <form action="{{ route('logout') }}" method="POST" style="margin: 0; display: inline;">
                 @csrf
                 <button type="submit" class="btn-logout-admin">Keluar</button>

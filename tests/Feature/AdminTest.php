@@ -74,4 +74,59 @@ class AdminTest extends TestCase
         $response->assertSee('Ahmad Dahlan');
         $response->assertSee('ahmad@example.com');
     }
+
+    public function test_admin_user_login_redirects_directly_to_admin_panel(): void
+    {
+        $admin = User::factory()->create([
+            'name' => 'Admin Test',
+            'email' => 'admin@test.com',
+            'password' => 'admin123',
+            'role' => 'admin',
+        ]);
+
+        $this->assertTrue($admin->isAdmin());
+
+        // Test normal web form login
+        $response = $this->post(route('login.post'), [
+            'email' => 'admin@test.com',
+            'password' => 'admin123',
+        ]);
+
+        $response->assertRedirect(route('admin.dashboard'));
+        $this->assertAuthenticatedAs($admin);
+
+        // Logout before testing AJAX call
+        $this->post(route('logout'));
+
+        // Test AJAX login response
+        $ajaxResponse = $this->postJson(route('login.post'), [
+            'email' => 'admin@test.com',
+            'password' => 'admin123',
+        ]);
+
+        $ajaxResponse->assertOk();
+        $ajaxResponse->assertJson([
+            'status' => 'success',
+            'redirect' => route('admin.dashboard'),
+        ]);
+    }
+
+    public function test_regular_user_login_redirects_to_home_not_admin(): void
+    {
+        $user = User::factory()->create([
+            'name' => 'Siswa Test',
+            'email' => 'siswa@test.com',
+            'password' => 'password123',
+            'role' => 'user',
+        ]);
+
+        $this->assertFalse($user->isAdmin());
+
+        $response = $this->post(route('login.post'), [
+            'email' => 'siswa@test.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertRedirect(route('home'));
+    }
 }
