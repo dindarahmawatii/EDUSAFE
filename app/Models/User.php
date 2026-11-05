@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -29,5 +29,39 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Accessor untuk role pengguna (default 'user').
+     */
+    public function getRoleAttribute(): string
+    {
+        if (! empty($this->attributes['role'])) {
+            return $this->attributes['role'];
+        }
+
+        return 'user';
+    }
+
+    /**
+     * Periksa apakah pengguna memiliki role admin.
+     */
+    public function isAdmin(): bool
+    {
+        return strtolower($this->role ?? '') === 'admin';
+    }
+
+    /**
+     * Accessor untuk inisial nama pengguna (1-2 huruf kapital).
+     */
+    public function getInitialsAttribute(): string
+    {
+        $name = trim($this->name ?? 'User');
+        $words = preg_split('/\s+/', $name);
+        if (count($words) >= 2) {
+            return strtoupper(mb_substr($words[0], 0, 1).mb_substr(end($words), 0, 1));
+        }
+
+        return strtoupper(mb_substr($name, 0, min(2, mb_strlen($name))));
     }
 }

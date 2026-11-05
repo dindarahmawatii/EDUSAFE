@@ -1,0 +1,60 @@
+    /* ==========================================================================
+    public/css/pages/auth/login.css - khusus halaman Login (DPPL Gambar 3.3.2)
+    Input & tombol sudah ada di components/forms.css dan components/buttons.css
+    ========================================================================== */
+
+    /* Latar gradasi biru layar penuh */
+    body.auth-page {
+        background: var(--gradient-auth);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    /* Kolom tengah */
+    .auth-wrap {
+        width: 100%;
+        max-width: 460px;
+        text-align: center;
+    }
+
+    /* Judul brand */
+    .auth-brand {
+        margin-bottom: 28px;
+        font-size: 52px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: var(--white);
+        text-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    }
+
+    /* Kartu form */
+    .auth-card {
+        padding: 40px 36px;
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+        text-align: left;
+    }
+    .auth-card .btn-block { margin-top: 6px; }
+
+    /* Link bawah: Forgot password & Buat Akun */
+    .auth-links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 24px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .auth-links .link-forgot   { color: var(--text-muted); text-decoration: underline; }
+    .auth-links .link-forgot:hover { color: #334155; }
+    .auth-links .link-register { color: var(--link); text-decoration: none; }
+    .auth-links .link-register:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) {
+        .auth-brand { font-size: 40px; }
+        .auth-card  { padding: 28px 22px; }
+    }

@@ -1,62 +1,79 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 
-// Saat buka 127.0.0.1:8000 langsung tampilkan halaman login
-Route::get('/', function () {
-    return view('welcome');
+/*
+|--------------------------------------------------------------------------
+| Web Routes - EDUSAFE
+|--------------------------------------------------------------------------
+*/
+
+// ==========================================
+// 1. PINTU MASUK UTAMA
+// ==========================================
+Route::redirect('/', '/login');
+
+// ==========================================
+// 2. MODUL AUTENTIKASI (Guest Only)
+// ==========================================
+Route::middleware('guest')->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::get('/login', 'showLogin')->name('login');
+        Route::post('/login', 'login')->name('login.post');
+
+        Route::get('/register', 'showRegister')->name('register');
+        Route::post('/register', 'register')->name('register.post');
+    });
+
+    Route::view('/lupa-password', 'auth.lupa-password')->name('forgot-password');
 });
 
-// Routing untuk halaman-halaman frontend milikmu
-Route::get('/login', function () {
-    return view('login');
+// ==========================================
+// 3. MODUL SISWA (Authenticated Only)
+// ==========================================
+Route::middleware('auth')->group(function () {
+
+    // Proses Keluar Akun
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Beranda Utama Siswa
+    Route::get('/beranda', [SiswaController::class, 'home'])->name('home');
+
+    // Sub-Modul Siswa
+    Route::prefix('siswa')->name('siswa.')->controller(SiswaController::class)->group(function () {
+        Route::get('/materi', 'materi')->name('materi');
+        Route::get('/materi/{id}', 'bacaMateri')->name('baca-materi');
+
+        Route::get('/kuis/{id?}', 'kuis')->name('kuis');
+        Route::post('/kuis/submit', 'submitKuis')->name('kuis.submit');
+
+        Route::get('/nilai', 'nilai')->name('nilai');
+        Route::get('/evaluasi', 'evaluasiSiswa')->name('evaluasi-siswa');
+        Route::get('/rekap', 'rekap')->name('rekap');
+
+        // Rute Review Jawaban Siswa
+        Route::view('/review-jawaban', 'siswa.review')->name('review');
+    });
+
 });
 
-Route::get('/login-admin', function () {
-    return view('login-admin');
-});
+// ==========================================
+// 4. MODUL ADMIN (Bebas Diakses untuk Testing UI)
+// ==========================================
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/data-pelajar', [AdminController::class, 'dataPelajar'])->name('data-pelajar');
+    Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
+    Route::view('/laporan', 'admin.laporan')->name('laporan');
+    Route::view('/rekap', 'admin.rekap')->name('rekap');
 
-// Tambahkan route register di sini agar tidak error 404
-Route::get('/register', function () {
-    return view('register');
-});
+    Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
 
-Route::get('/materi', function () {
-    return view('materi');
-});
-
-Route::get('/baca-materi', function () {
-    return view('baca-materi');
-});
-
-Route::get('/kuis', function () {
-    return view('kuis');
-});
-
-Route::get('/nilai', function () {
-    return view('nilai');
-});
-
-Route::get('/evaluasi', function () {
-    return view('evaluasi');
-});
-
-Route::get('/evaluasi-siswa', function () {
-    return view('evaluasi-siswa');
-});
-
-Route::get('/rekap', function () {
-    return view('rekap');
-});
-
-Route::get('/admin', function () {
-    return view('admin');
-});
-
-Route::get('/data-pelajar', function () {
-    return view('data-pelajar');
-});
-
-Route::get('/laporan', function () {
-    return view('laporan');
+    Route::post('/kuis/store', [AdminController::class, 'storeSoalKuis'])->name('kuis.store');
+    Route::post('/kuis/store-ajax', [AdminController::class, 'storeSoalKuis'])->name('kuis.storeAjax');
+    Route::put('/kuis/{id}', [AdminController::class, 'updateSoalKuis'])->whereNumber('id')->name('kuis.update');
+    Route::delete('/kuis/{id}', [AdminController::class, 'destroySoalKuis'])->whereNumber('id')->name('kuis.destroy');
 });

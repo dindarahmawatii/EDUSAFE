@@ -1,0 +1,91 @@
+/* ==========================================================================
+   public/css/components/navbar.css
+   ========================================================================== */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 5%;
+    background: var(--white);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar .brand {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-links a {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    color: #4B5563;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background-color: var(--nav-active);
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.nav-auth {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* Tombol Masuk (Biru Muda / Sky) */
+.btn-sky {
+    background-color: #4BB8F9;
+    color: #FFFFFF;
+    border: none;
+}
+.btn-sky:hover {
+    background-color: #33a9f0;
+}
+
+/* Tombol Daftar (Biru Sedang / Blue) */
+.btn-blue {
+    background-color: #2D5EAD;
+    color: #FFFFFF;
+    border: none;
+}
+.btn-blue:hover {
+    background-color: #00288A;
+}
+
+/* Tombol Logout Test Kecil */
+.btn-logout-test {
+    background: #F1F5F9;
+    color: #64748B;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout-test:hover {
+    background: #FEE2E2;
+    color: #DC2626;
+    border-color: #FCA5A5;
+}

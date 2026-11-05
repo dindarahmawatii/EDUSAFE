@@ -1,0 +1,349 @@
+/* ==========================================================================
+   public/css/pages/siswa/evaluasi.css - Halaman Evaluasi Performa Siswa
+   ========================================================================== */
+
+.evaluasi-page-wrapper {
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #E0F2FE 100%);
+    min-height: calc(100vh - 120px);
+    padding: 50px 20px 80px;
+}
+
+.evaluasi-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.evaluasi-header {
+    margin-bottom: 30px;
+}
+
+.evaluasi-main-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.evaluasi-main-desc {
+    font-size: 14px;
+    color: #64748B;
+}
+
+/* Top Profile Card */
+.eval-profile-card {
+    background: #FFFFFF;
+    border: 1px solid #D9DEE8;
+    border-radius: 16px;
+    padding: 24px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    margin-bottom: 24px;
+    gap: 20px;
+}
+
+.profile-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-avatar {
+    width: 56px;
+    height: 56px;
+    background: #DCE7FE;
+    color: #00288A;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+}
+
+.badge-active {
+    background: #00288A;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.profile-meta {
+    font-size: 13px;
+    color: #64748B;
+}
+
+.profile-stats-right {
+    display: flex;
+    gap: 30px;
+    border-left: 1px solid #E2E8F0;
+    padding-left: 30px;
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 22px;
+    font-weight: 800;
+    color: #00288A;
+}
+
+.stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.5px;
+}
+
+/* Middle Grid */
+.eval-grid-middle {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.eval-card {
+    background: #FFFFFF;
+    border: 1px solid #D9DEE8;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+/* Metrik Kompetensi Slider */
+.metrik-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.badge-sub {
+    background: #E0E7FF;
+    color: #1E40AF;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.score-avg-badge {
+    text-align: right;
+}
+
+.score-avg-badge span {
+    font-size: 20px;
+    font-weight: 800;
+    color: #00288A;
+}
+
+.score-avg-badge small {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    color: #64748B;
+}
+
+.metrik-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 24px;
+}
+
+.slider-item {
+    margin-bottom: 20px;
+}
+
+.slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.slider-label strong {
+    color: #00288A;
+}
+
+.slider-track {
+    background: #E2E8F0;
+    height: 8px;
+    border-radius: 4px;
+    position: relative;
+}
+
+.slider-fill {
+    background: #00288A;
+    height: 100%;
+    border-radius: 4px;
+}
+
+.slider-thumb {
+    width: 16px;
+    height: 16px;
+    background: #00288A;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Statistik Belajar Terakhir */
+.card-section-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #475569;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.flex-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0F172A;
+}
+
+.stat-row-item {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.stat-row-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.stat-icon-box {
+    font-size: 16px;
+}
+
+.stat-row-item strong {
+    font-size: 14px;
+    color: #00288A;
+}
+
+/* Bottom Grid */
+.eval-grid-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.check-item {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 10px;
+}
+
+.check-item.checked {
+    background: #F0FDF4;
+    border-color: #BBF7D0;
+    color: #166534;
+}
+
+.checkbox-icon {
+    width: 20px;
+    height: 20px;
+    background: #166534;
+    color: #FFFFFF;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.checkbox-icon.uncheck {
+    background: transparent;
+    border: 2px solid #CBD5E1;
+}
+
+/* Catatan Box View */
+.catatan-desc-label {
+    font-size: 12px;
+    color: #64748B;
+    margin-bottom: 14px;
+}
+
+.catatan-box-view {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #14532D;
+}
+
+.eval-footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: #64748B;
+}
+
+/* Responsif */
+@media (max-width: 900px) {
+    .eval-grid-middle,
+    .eval-grid-bottom,
+    .eval-profile-card {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .profile-stats-right {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid #E2E8F0;
+        padding-top: 20px;
+        justify-content: space-around;
+    }
+}

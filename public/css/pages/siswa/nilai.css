@@ -1,0 +1,319 @@
+/* ==========================================================================
+   public/css/pages/siswa/nilai.css - Halaman Nilai & Pencapaian DPPL
+   ========================================================================== */
+
+.nilai-page-wrapper {
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #E0F2FE 100%);
+    min-height: calc(100vh - 120px);
+    padding: 50px 20px 80px;
+}
+
+.nilai-container {
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+/* Header */
+.nilai-header {
+    margin-bottom: 32px;
+}
+
+.nilai-main-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.nilai-main-desc {
+    font-size: 14px;
+    color: #64748B;
+}
+
+/* Grid Top Cards */
+.top-cards-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+/* Card Quiz Terakhir */
+.card-quiz-terakhir {
+    background: #DDF0FF;
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+.badge-quiz {
+    background: #C3E2F6;
+    color: #1E3A8A;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.quiz-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 4px;
+}
+
+.quiz-date {
+    font-size: 13px;
+    color: #64748B;
+    margin-bottom: 22px;
+}
+
+.btn-review {
+    background: #00288A;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease;
+}
+
+.btn-review:hover {
+    background: #001F6B;
+}
+
+/* Lingkaran Skor Akhir */
+.score-circle-wrapper {
+    flex-shrink: 0;
+}
+
+.score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 8px solid #00288A;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 40, 138, 0.1);
+}
+
+.score-number {
+    font-size: 34px;
+    font-weight: 800;
+    color: #00288A;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748B;
+    margin-top: 4px;
+}
+
+/* Card Kemajuan Kursus */
+.card-kemajuan {
+    background: #DDF0FF;
+    border-radius: 16px;
+    padding: 28px 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+.kemajuan-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 16px;
+}
+
+.progress-group {
+    margin-bottom: 14px;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.progress-labels strong {
+    color: #0F172A;
+}
+
+.progress-bar-bg {
+    background: #C3E2F6;
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    background: #00288A;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.kemajuan-note {
+    font-size: 12px;
+    color: #475569;
+    font-style: italic;
+    line-height: 1.4;
+    margin-top: 10px;
+}
+
+/* Section Detail Nilai per Modul */
+.detail-nilai-section {
+    margin-top: 10px;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.detail-header h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+    background: #F8FAFC;
+    color: #00288A;
+}
+
+/* List Item Modul */
+.modul-nilai-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modul-nilai-item {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modul-nilai-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 40, 138, 0.08);
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.item-icon {
+    background: #E2E8F0;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #1E293B;
+    font-weight: 700;
+}
+
+.item-modul-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 2px;
+}
+
+.item-modul-sub {
+    font-size: 12px;
+    color: #64748B;
+}
+
+.item-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.score-info {
+    text-align: right;
+}
+
+.item-score {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: #0F172A;
+}
+
+.item-status {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status-sangat-baik {
+    color: #1D4ED8;
+}
+
+.status-lulus {
+    color: #059669;
+}
+
+.item-arrow {
+    font-size: 22px;
+    color: #94A3B8;
+    font-weight: 300;
+}
+
+/* Responsif */
+@media (max-width: 800px) {
+    .top-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}

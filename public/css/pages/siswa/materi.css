@@ -1,0 +1,271 @@
+/* ==========================================================================
+   public/css/pages/siswa/materi.css - Halaman Daftar Materi DPPL
+   ========================================================================== */
+
+.materi-page-wrapper {
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #E0F2FE 100%);
+    min-height: calc(100vh - 120px);
+    padding: 50px 20px 80px;
+}
+
+.materi-container {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+/* Header & Progres Card */
+.materi-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.materi-title-area {
+    max-width: 680px;
+}
+
+.materi-main-title {
+    font-size: 38px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.materi-main-desc {
+    font-size: 15px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+/* Card Progres Belajar */
+.progres-card {
+    background: #DCE7FE;
+    border: 1px solid #BFDBFE;
+    border-radius: 14px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 220px;
+}
+
+.progres-icon {
+    background: #2563EB;
+    color: #FFFFFF;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progres-text {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.progres-percentage {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1E3A8A;
+    margin-top: 2px;
+}
+
+/* Grid 3 Kolom */
+.materi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* Card Modul */
+.modul-card {
+    background: #DDF0FF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modul-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+}
+
+/* Thumbnail Header Modul */
+.modul-thumb {
+    height: 140px;
+    position: relative;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modul-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: #FFFFFF;
+    color: #1E3A8A;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.thumb-icon {
+    font-size: 40px;
+    color: #FFFFFF;
+}
+
+/* Variasi Warna Thumbnail Modul Sesuai DPPL */
+.preview-thumb { background: linear-gradient(135deg, #93C5FD 0%, #3B82F6 100%); }
+.blue-gradient-thumb { background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%); }
+.dark-thumb { background: #1E293B; }
+.deep-blue-thumb { background: #0369A1; }
+.royal-blue-thumb { background: #1D4ED8; }
+
+.thumb-mockup {
+    background: #FFFFFF;
+    width: 80%;
+    height: 70%;
+    border-radius: 8px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #1E3A8A;
+}
+
+/* Isian Konten Modul */
+.modul-content {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.modul-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 10px;
+}
+
+.modul-desc {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.modul-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.modul-time {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.btn-buka {
+    background: #00288A;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.btn-buka:hover {
+    background: #001F6B;
+}
+
+/* Styling Card Terkunci */
+.locked-card {
+    background: #E8F2FF;
+    border: 2px dashed #CBD5E1;
+}
+
+.locked-thumb {
+    background: #E2E8F0;
+}
+
+.lock-icon {
+    font-size: 36px;
+    opacity: 0.5;
+}
+
+.locked-title {
+    color: #94A3B8;
+}
+
+.locked-desc {
+    color: #94A3B8;
+}
+
+.btn-terkunci {
+    background: #E2E8F0;
+    color: #94A3B8;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+/* Button Bottom */
+.materi-bottom-action {
+    text-align: center;
+    margin-top: 48px;
+}
+
+.btn-lihat-semua {
+    background: #1E293B;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-lihat-semua:hover {
+    background: #0F172A;
+}
+
+/* Responsif Layar */
+@media (max-width: 900px) {
+    .materi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .materi-header-flex {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 600px) {
+    .materi-grid {
+        grid-template-columns: 1fr;
+    }
+}
