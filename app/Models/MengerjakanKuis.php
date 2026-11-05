@@ -19,6 +19,7 @@ class MengerjakanKuis extends Model
         'idmengerjakan',
         'iduser',
         'idkuis',
+        'idmateri',
         'jawabanKuis',
         'nilai_akhir',
         'status_kelulusan',
@@ -41,5 +42,10 @@ class MengerjakanKuis extends Model
     public function kuis(): BelongsTo
     {
         return $this->belongsTo(Kuis::class, 'idkuis', 'idkuis');
+    }
+
+    public function materi(): BelongsTo
+    {
+        return $this->belongsTo(Materi::class, 'idmateri', (new Materi)->getKeyName());
     }
 }
