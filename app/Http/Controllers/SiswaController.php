@@ -149,11 +149,12 @@ class SiswaController extends Controller
                 }
 
                 $idMengerjakan = DB::table('mengerjakan_kuis')->insertGetId([
-                    'iduser' => Auth::id(),
-                    'idkuis' => $idKuis,
-                    'jawabanKuis' => json_encode($jawabanUserMap),
-                    'nilai_akhir' => $skor,
-                    'status_kelulusan' => $skor >= 70 ? 'LULUS' : 'TIDAK LULUS',
+                    'iduser'            => Auth::id(),
+                    'idkuis'            => $idKuis,
+                    'idmateri'          => $materiId,
+                    'jawabanKuis'       => json_encode($jawabanUserMap),
+                    'nilai_akhir'       => $skor,
+                    'status_kelulusan'  => $skor >= 70 ? 'LULUS' : 'TIDAK LULUS',
                     'tanggal_pengerjaan' => now(),
                 ]);
 
@@ -208,8 +209,8 @@ class SiswaController extends Controller
                 if ($terakhirDb) {
                     $kuisTerakhir = (object) [
                         'nama_modul' => $terakhirDb->namakuis ?? 'Malware Analysis Fundamentals',
-                        'skor' => $terakhirDb->nilai_akhir ?? 90,
-                        'tanggal' => date('d M Y', strtotime($terakhirDb->tanggal_pengerjaan)),
+                        'skor'       => $terakhirDb->nilai_akhir ?? 90,
+                        'tanggal'    => date('d M Y', strtotime($terakhirDb->tanggal_pengerjaan)),
                     ];
                 }
             } catch (\Throwable $e) {
@@ -230,7 +231,82 @@ class SiswaController extends Controller
             }
         }
 
-        return view('siswa.nilai', compact('kuisTerakhir', 'materiSelesai'));
+        // Total modul yang ada di database
+        $totalMateri = 6;
+        try {
+            $totalMateri = DB::table('materi')->count() ?: 6;
+        } catch (\Throwable $e) {
+            // Gunakan fallback
+        }
+
+        // Rata-rata nilai akhir kuis user
+        $rataRataNilai = 0;
+        if (Auth::check()) {
+            try {
+                $avg = DB::table('mengerjakan_kuis')
+                    ->where('iduser', Auth::id())
+                    ->avg('nilai_akhir');
+
+                $rataRataNilai = $avg !== null ? round((float) $avg, 1) : 0;
+            } catch (\Throwable $e) {
+                $rataRataNilai = 0;
+            }
+        }
+
+        // Detail nilai per modul (nilai terbaik per materi yang pernah dikerjakan)
+        $nilaiPerModul = collect();
+        if (Auth::check()) {
+            try {
+                $nilaiPerModul = DB::table('mengerjakan_kuis')
+                    ->join('materi', 'mengerjakan_kuis.idmateri', '=', 'materi.idmateri')
+                    ->where('mengerjakan_kuis.iduser', Auth::id())
+                    ->whereNotNull('mengerjakan_kuis.idmateri')
+                    ->select(
+                        'materi.idmateri',
+                        'materi.namamateri',
+                        'materi.kategori',
+                        DB::raw('MAX(mengerjakan_kuis.nilai_akhir) as nilai_terbaik'),
+                        DB::raw('COUNT(DISTINCT mengerjakan_kuis.idmengerjakan) as jumlah_percobaan'),
+                        DB::raw('MAX(mengerjakan_kuis.tanggal_pengerjaan) as tanggal_terakhir'),
+                    )
+                    ->groupBy('materi.idmateri', 'materi.namamateri', 'materi.kategori')
+                    ->orderBy('materi.idmateri')
+                    ->get()
+                    ->map(function ($item) {
+                        $totalSoal = DB::table('soal')->where('idmateri', $item->idmateri)->count();
+
+                        $nilaiTerbaik = (float) $item->nilai_terbaik;
+                        $status = $nilaiTerbaik >= 85
+                            ? 'Sangat Baik'
+                            : ($nilaiTerbaik >= 70 ? 'Lulus' : 'Remedial');
+                        $statusClass = $nilaiTerbaik >= 85
+                            ? 'status-sangat-baik'
+                            : ($nilaiTerbaik >= 70 ? 'status-lulus' : 'status-remedial');
+
+                        return (object) [
+                            'nama_modul'  => $item->namamateri,
+                            'kategori'    => $item->kategori,
+                            'nilai'       => (int) $nilaiTerbaik,
+                            'total_soal'  => $totalSoal,
+                            'status'      => $status,
+                            'status_class' => $statusClass,
+                            'tanggal'     => $item->tanggal_terakhir
+                                ? date('d M Y', strtotime($item->tanggal_terakhir))
+                                : null,
+                        ];
+                    });
+            } catch (\Throwable $e) {
+                $nilaiPerModul = collect();
+            }
+        }
+
+        return view('siswa.nilai', compact(
+            'kuisTerakhir',
+            'materiSelesai',
+            'totalMateri',
+            'rataRataNilai',
+            'nilaiPerModul',
+        ));
     }
 
     /**

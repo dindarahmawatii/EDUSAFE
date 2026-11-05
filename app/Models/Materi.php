@@ -66,4 +66,20 @@ class Materi extends Model
     {
         return $this->attributes['deskripsi'] ?? $this->attributes['konten'] ?? null;
     }
+
+    /**
+     * Accessor konten teks materi.
+     */
+    public function getKontenAttribute(): mixed
+    {
+        return $this->attributes['konten'] ?? $this->attributes['isi_teks'] ?? $this->attributes['deskripsi'] ?? null;
+    }
+
+    /**
+     * Accessor kategori materi.
+     */
+    public function getKategoriAttribute(): mixed
+    {
+        return $this->attributes['kategori'] ?? 'Modul Pembelajaran';
+    }
 }

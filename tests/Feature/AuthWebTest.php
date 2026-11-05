@@ -25,7 +25,7 @@ class AuthWebTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
-        $response->assertSee('Selamat Datang!');
+        $response->assertSee('EduSafe');
     }
 
     public function test_user_can_register_via_web_form_and_data_is_saved_in_database(): void
@@ -90,8 +90,55 @@ class AuthWebTest extends TestCase
 
         $response = $this->post('/login', $payload);
 
-        $response->assertRedirect('/materi');
+        $response->assertRedirect('/beranda');
         $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_user_can_login_via_json_ajax_request(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'ajax_siswa@edusafe.test',
+            'password' => 'password123',
+        ]);
+
+        $payload = [
+            'email' => 'ajax_siswa@edusafe.test',
+            'password' => 'password123',
+        ];
+
+        $response = $this->postJson('/login', $payload);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'success',
+            'message' => 'Login berhasil!',
+            'redirect' => route('home'),
+        ]);
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_admin_can_login_and_redirects_to_admin_dashboard(): void
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@edusafe.test',
+            'password' => 'password123',
+            'role' => 'admin',
+        ]);
+
+        $payload = [
+            'email' => 'admin@edusafe.test',
+            'password' => 'password123',
+        ];
+
+        $response = $this->postJson('/login', $payload);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'success',
+            'message' => 'Login berhasil!',
+            'redirect' => route('admin.dashboard'),
+        ]);
+        $this->assertAuthenticatedAs($admin);
     }
 
     public function test_user_cannot_login_with_invalid_password_via_web(): void

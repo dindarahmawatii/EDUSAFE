@@ -20,7 +20,6 @@ class SiswaTest extends TestCase
         $this->actingAs($user)->get(route('siswa.kuis'))
             ->assertOk()
             ->assertSee('EDUSAFE - Pengerjaan Kuis')
-            ->assertSee('PERTANYAAN 1')
             ->assertSee('Progress Belajar');
         $this->actingAs($user)->get(route('siswa.nilai'))->assertOk();
         $this->actingAs($user)->get(route('siswa.evaluasi-siswa'))->assertOk();

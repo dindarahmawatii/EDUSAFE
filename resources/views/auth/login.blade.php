@@ -187,6 +187,12 @@
                     const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
                     showAlert(firstError || data.message || 'Data tidak valid.', 'error');
 
+                } else if (res.status === 419) {
+                    showAlert('Sesi telah kedaluwarsa. Halaman akan dimuat ulang...', 'warning');
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1200);
+
                 } else {
                     showAlert(data.message || 'Terjadi kesalahan. Silakan coba lagi.', 'error');
                 }

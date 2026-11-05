@@ -24,11 +24,15 @@
             <div class="stat-card">
                 <div class="stat-card-header">
                     <div class="stat-icon">👥</div>
-                    <span class="stat-trend">+12%↑</span>
+                    @if(($userBaruBulanIni ?? 0) > 0)
+                        <span class="stat-trend">+{{ $userBaruBulanIni }} baru</span>
+                    @else
+                        <span class="stat-trend active-tag">Aktif</span>
+                    @endif
                 </div>
                 <div>
                     <p class="stat-label">Total User</p>
-                    <h3 class="stat-value">1,284</h3>
+                    <h3 class="stat-value">{{ number_format($totalUser ?? 0) }}</h3>
                 </div>
             </div>
 
@@ -68,37 +72,33 @@
 
         <!-- Bagian User Terbaru -->
         <div class="admin-card">
-            <div class="admin-card-header">
+            <div class="admin-card-header flex-between">
                 <h3 class="admin-card-title">User Terbaru</h3>
+                <span class="badge-status-blue" style="font-size: 12px;">{{ count($recentUsers ?? []) }} User Terakhir</span>
             </div>
             
             <div class="user-list">
-                <div class="user-item">
-                    <div class="user-avatar-circle">JD</div>
-                    <div class="user-details">
-                        <h4>Jane Doe</h4>
-                        <p>Baru saja bergabung</p>
+                @forelse($recentUsers ?? [] as $user)
+                    <div class="user-item">
+                        <div class="user-avatar-circle">{{ $user->initials }}</div>
+                        <div class="user-details" style="flex: 1; min-width: 0;">
+                            <h4 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $user->name }} ({{ $user->email }})">
+                                {{ $user->name }}
+                            </h4>
+                            <p>
+                                {{ $user->created_at ? $user->created_at->diffForHumans() : 'Baru saja bergabung' }}
+                                <span style="color: #94A3B8;">&bull; {{ $user->email }}</span>
+                            </p>
+                        </div>
                     </div>
-                </div>
-
-                <div class="user-item">
-                    <div class="user-avatar-circle">AS</div>
-                    <div class="user-details">
-                        <h4>Andi Saputra</h4>
-                        <p>2 jam yang lalu</p>
+                @empty
+                    <div style="padding: 20px 0; text-align: center; color: #64748B; font-size: 13px;">
+                        Belum ada user yang terdaftar di database.
                     </div>
-                </div>
-
-                <div class="user-item">
-                    <div class="user-avatar-circle">RK</div>
-                    <div class="user-details">
-                        <h4>Rina Kartika</h4>
-                        <p>5 jam yang lalu</p>
-                    </div>
-                </div>
+                @endforelse
             </div>
 
-            <button class="btn-outline-full">Lihat Semua User</button>
+            <a href="{{ route('admin.data-pelajar') }}" class="btn-outline-full" style="text-decoration: none; display: block; text-align: center; margin-top: 15px;">Lihat Semua User</a>
         </div>
 
         <!-- Bagian Tabel Materi  -->
@@ -198,7 +198,7 @@
             <span class="modal-close" onclick="toggleModal(false)">&times;</span>
         </div>
 
-        <form action="#" method="POST">
+        <form action="{{ route('admin.materi.store') }}" method="POST">
             @csrf
             
             <div class="form-group">

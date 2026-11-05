@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -79,8 +79,8 @@ class AuthController extends Controller
 
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => "Terlalu banyak percobaan login yang salah (5 kali).",
-                    'retry_after' => $seconds
+                    'message' => 'Terlalu banyak percobaan login yang salah (5 kali).',
+                    'retry_after' => $seconds,
                 ], 429);
             }
 
@@ -97,16 +97,20 @@ class AuthController extends Controller
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
+            /** @var User $user */
+            $user = Auth::user();
+            $redirectUrl = ($user && $user->isAdmin()) ? route('admin.dashboard') : route('home');
+
             // Jika dipanggil via AJAX/Fetch JavaScript
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Login berhasil!',
-                    'redirect' => route('home') // Otomatis mengarah ke route('home') /beranda
+                    'redirect' => $redirectUrl,
                 ]);
             }
 
-            return redirect()->route('home');
+            return redirect()->intended($redirectUrl);
         }
 
         // Jika Login Gagal -> Tambahkan Hit Limiter
@@ -124,7 +128,7 @@ class AuthController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Terlalu banyak percobaan login yang salah (5 kali).',
-                    'retry_after' => $seconds
+                    'retry_after' => $seconds,
                 ], 429);
             }
 
@@ -138,7 +142,7 @@ class AuthController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => 'Email atau password salah.',
-                'remaining_attempts' => $remaining
+                'remaining_attempts' => $remaining,
             ], 401);
         }
 

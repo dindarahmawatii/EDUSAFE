@@ -13,9 +13,12 @@ return new class extends Migration
     {
         if (! Schema::hasTable('materi')) {
             Schema::create('materi', function (Blueprint $table) {
-                $table->id();
-                $table->string('judul');
+                $table->id('idmateri');
+                $table->string('judul')->nullable();
+                $table->string('namamateri')->nullable();
+                $table->string('kategori')->nullable();
                 $table->text('deskripsi')->nullable();
+                $table->text('konten')->nullable();
                 $table->string('durasi')->nullable();
                 $table->timestamps();
             });

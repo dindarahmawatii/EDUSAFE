@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Materi;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ use Illuminate\View\View;
 class AdminController extends Controller
 {
     /**
-     * Dashboard admin: daftar materi dari database.
+     * Dashboard admin: daftar materi dari database serta statistik user.
      */
     public function dashboard(): View
     {
@@ -23,6 +24,17 @@ class AdminController extends Controller
         }
 
         $totalMateri = $materiList->count();
+
+        try {
+            $totalUser = User::count();
+            $userBaruBulanIni = User::where('created_at', '>=', now()->startOfMonth())->count();
+            $recentUsers = User::orderByDesc((new User)->getKeyName())->take(5)->get();
+        } catch (\Throwable $e) {
+            $totalUser = 0;
+            $userBaruBulanIni = 0;
+            $recentUsers = collect();
+        }
+
         $soalKuis = collect();
         try {
             $materiById = $materiList->keyBy(fn ($materi) => $materi->getKey());
@@ -46,7 +58,62 @@ class AdminController extends Controller
             $soalKuis = collect();
         }
 
-        return view('admin.dashboard', compact('materiList', 'totalMateri', 'soalKuis'));
+        return view('admin.dashboard', compact(
+            'materiList',
+            'totalMateri',
+            'soalKuis',
+            'totalUser',
+            'userBaruBulanIni',
+            'recentUsers'
+        ));
+    }
+
+    /**
+     * Halaman data pelajar: daftar siswa tersinkron dari database.
+     */
+    public function dataPelajar(): View
+    {
+        try {
+            $totalModul = Materi::count() ?: 6;
+        } catch (\Throwable $e) {
+            $totalModul = 6;
+        }
+
+        try {
+            $pelajarList = User::orderByDesc((new User)->getKeyName())->get()->map(function ($user) {
+                $modulSelesai = 0;
+                $rerataNilai = 0;
+                try {
+                    $modulSelesai = DB::table('progres_membaca')
+                        ->where('iduser', $user->id)
+                        ->where('status_selesai', 1)
+                        ->count();
+                    $avg = DB::table('mengerjakan_kuis')
+                        ->where('iduser', $user->id)
+                        ->avg('nilai_akhir');
+                    if ($avg !== null) {
+                        $rerataNilai = (int) round($avg);
+                    }
+                } catch (\Throwable $e) {
+                    // Abaikan jika tabel belum siap
+                }
+
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'initials' => $user->initials,
+                    'modul_selesai' => $modulSelesai,
+                    'rerata_nilai' => $rerataNilai,
+                    'status' => 'Aktif',
+                    'created_at' => $user->created_at,
+                ];
+            });
+        } catch (\Throwable $e) {
+            $pelajarList = collect();
+        }
+
+        return view('admin.data-pelajar', compact('pelajarList', 'totalModul'));
     }
 
     /**
@@ -61,12 +128,23 @@ class AdminController extends Controller
             'konten'    => 'required|string',
         ]);
 
-        // Tabel MySQL memakai kolom namamateri/konten; kolom lain ditambahkan hanya jika ada.
-        $data = [
-            'namamateri' => $validated['judul'],
-            'kategori'   => $validated['kategori'],
-            'konten'     => $validated['konten'],
-        ];
+        $data = [];
+
+        if (Schema::hasColumn('materi', 'namamateri')) {
+            $data['namamateri'] = $validated['judul'];
+        }
+
+        if (Schema::hasColumn('materi', 'judul')) {
+            $data['judul'] = $validated['judul'];
+        }
+
+        if (Schema::hasColumn('materi', 'kategori')) {
+            $data['kategori'] = $validated['kategori'];
+        }
+
+        if (Schema::hasColumn('materi', 'konten')) {
+            $data['konten'] = $validated['konten'];
+        }
 
         if (Schema::hasColumn('materi', 'deskripsi')) {
             $data['deskripsi'] = $validated['deskripsi'];
@@ -74,6 +152,20 @@ class AdminController extends Controller
 
         if (Schema::hasColumn('materi', 'created_at')) {
             $data['created_at'] = now();
+        }
+
+        if (Schema::hasColumn('materi', 'updated_at')) {
+            $data['updated_at'] = now();
+        }
+
+        if (empty($data)) {
+            $data = [
+                'namamateri' => $validated['judul'],
+                'kategori'   => $validated['kategori'],
+                'deskripsi'  => $validated['deskripsi'],
+                'konten'     => $validated['konten'],
+                'created_at' => now(),
+            ];
         }
 
         DB::table('materi')->insert($data);
