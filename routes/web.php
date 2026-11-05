@@ -67,7 +67,9 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::view('/data-pelajar', 'admin.data-pelajar')->name('data-pelajar');
+
     Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
+
     Route::view('/laporan', 'admin.laporan')->name('laporan');
     Route::view('/rekap', 'admin.rekap')->name('rekap');
 

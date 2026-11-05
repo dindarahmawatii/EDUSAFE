@@ -6,10 +6,12 @@
 <div class="admin-page-wrapper">
     <div class="admin-container">
         
-        <!-- Header Halaman -->
-        <div style="margin-bottom: 25px;">
-            <h1 class="admin-card-title" style="font-size: 24px; color: #00288A; margin-bottom: 6px;">Evaluasi Performa Pengguna</h1>
-            <p style="color: #64748B; font-size: 14px; margin: 0;">Berikan penilaian dan umpan balik profesional untuk perkembangan akademik pengguna.</p>
+        <!-- Header & Tombol Riwayat -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <div>
+                <h1 class="admin-card-title" style="font-size: 24px; color: #00288A; margin-bottom: 6px;">Evaluasi Performa Pengguna</h1>
+                <p style="color: #64748B; font-size: 14px; margin: 0;">Berikan penilaian dan umpan balik profesional untuk perkembangan akademik pengguna.</p>
+            </div>
         </div>
 
         <!-- Banner Info Pelajar -->
@@ -37,18 +39,17 @@
             <h3 class="admin-card-title" style="margin-bottom: 8px;">Catatan Instruktur & Rekomendasi</h3>
             <p style="font-size: 13px; color: #64748B; margin-top: 0; margin-bottom: 20px;">Berikan detail mendalam mengenai kelebihan dan area yang perlu difokuskan oleh siswa.</p>
 
-            <form action="{{ route('admin.evaluasi') }}" method="GET">
+            <form onsubmit="event.preventDefault(); alert('Evaluasi berhasil disimpan dan dikirim secara resmi!');">
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <textarea rows="6" placeholder="Tuliskan evaluasi profesional Anda di sini..." style="line-height: 1.6;"></textarea>
+                    <textarea rows="6" placeholder="Tuliskan evaluasi profesional Anda di sini..." style="line-height: 1.6;" required></textarea>
                 </div>
 
                 <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #F1F5F9; padding-top: 20px;">
                     <p style="font-size: 12px; color: #64748B; margin: 0; max-width: 500px;">
                         💡 <em>Hasil evaluasi ini akan langsung tampil pada dashboard profil pengguna setelah dikirimkan secara resmi.</em>
                     </p>
-                    <div style="display: flex; gap: 12px;">
-                        <a href="{{ route('admin.dashboard') }}" class="btn-cancel" style="text-decoration: none; padding: 10px 20px; font-size: 13px;">Draf Evaluasi</a>
-                        <button type="button" class="btn-primary-admin" style="padding: 10px 22px;">Simpan & Kirim Evaluasi</button>
+                    <div>
+                        <button type="submit" class="btn-primary-admin" style="padding: 10px 24px;">Simpan & Kirim Evaluasi</button>
                     </div>
                 </div>
             </form>
