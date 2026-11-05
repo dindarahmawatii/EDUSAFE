@@ -49,7 +49,7 @@
         <div class="admin-card">
             <div class="flex-between" style="margin-bottom: 20px;">
                 <h3 class="admin-card-title">Riwayat Penyelesaian Modul Siswa</h3>
-                <button class="btn-cancel" style="padding: 8px 16px; font-size: 13px;">📥 Cetak Laporan Rekap</button>
+                <button class="btn-cancel" style="padding: 8px 16px; font-size: 13px;">📥 Cetak Rekap</button>
             </div>
 
             <div class="table-responsive">

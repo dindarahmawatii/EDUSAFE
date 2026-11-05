@@ -67,6 +67,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/data-pelajar', [AdminController::class, 'dataPelajar'])->name('data-pelajar');
     Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
+
     Route::view('/laporan', 'admin.laporan')->name('laporan');
     Route::view('/rekap', 'admin.rekap')->name('rekap');
 

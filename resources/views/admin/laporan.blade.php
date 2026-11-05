@@ -13,7 +13,6 @@
                     <h2 class="admin-card-title" style="font-size: 22px; color: #00288A;">Laporan Rekapitulasi Edukasi</h2>
                     <p style="color: #64748B; font-size: 13px; margin-top: 4px;">Unduh dan tinjau performa statistik kegiatan kuis serta tingkat pemahaman siswa.</p>
                 </div>
-                <button class="btn-primary-admin" style="background: #10B981;">Ekspor Laporan (PDF/Excel)</button>
             </div>
 
             <!-- 3 Ringkasan Statistik -->
