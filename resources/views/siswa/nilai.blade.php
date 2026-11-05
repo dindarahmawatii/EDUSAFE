@@ -8,9 +8,10 @@
 
 @section('content')
 @php
-    $materiVal = $materiSelesai ?? 12;
-    $persenMateri = ($materiVal / 15) * 100;
-    $rataNilaiVal = $rataRataNilai ?? 88.5;
+    $materiVal    = $materiSelesai ?? 0;
+    $totalModul   = $totalMateri ?? 6;
+    $persenMateri = $totalModul > 0 ? ($materiVal / $totalModul) * 100 : 0;
+    $rataNilaiVal = $rataRataNilai ?? 0;
 @endphp
 
 <div class="nilai-page-wrapper">
@@ -32,7 +33,7 @@
                     <h2 class="quiz-title">
                         {{ data_get($kuisTerakhir, 'nama_modul', 'Malware Analysis Fundamentals') }}
                     </h2>
-                    <p class="quiz-date">Diselesaikan pada 24 Okt 2026</p>
+                    <p class="quiz-date">Diselesaikan pada {{ data_get($kuisTerakhir, 'tanggal', '-') }}</p>
                     
                     <!-- LINK SUDAH DIPERBAIKI KE ROUTE REVIEW -->
                     <a href="{{ route('siswa.review') }}" class="btn-review">
@@ -56,7 +57,7 @@
                 <div class="progress-group">
                     <div class="progress-labels">
                         <span>Materi Selesai</span>
-                        <strong>{{ $materiVal }}/15</strong>
+                        <strong>{{ $materiVal }}/{{ $totalModul }}</strong>
                     </div>
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill" style="--w: {{ $persenMateri }}%;"></div>
@@ -74,7 +75,7 @@
                 </div>
 
                 <p class="kemajuan-note" style="margin-top: 16px;">
-                    "Tinggal {{ 15 - $materiVal }} modul lagi untuk mendapatkan sertifikat profesional!"
+                    "Tinggal {{ $totalModul - $materiVal }} modul lagi untuk mendapatkan sertifikat profesional!"
                 </p>
             </div>
 
@@ -92,57 +93,35 @@
 
             <!-- List Nilai Modul -->
             <div class="modul-nilai-list">
-                
-                <div class="modul-nilai-item">
-                    <div class="item-left">
-                        <div class="item-icon">⚙️</div>
-                        <div>
-                            <h4 class="item-modul-title">Pengantar Malware Analysis</h4>
-                            <span class="item-modul-sub">Modul 1 • 12 Pertanyaan</span>
-                        </div>
-                    </div>
-                    <div class="item-right">
-                        <div class="score-info">
-                            <span class="item-score">95/100</span>
-                            <span class="item-status status-sangat-baik">Sangat Baik</span>
-                        </div>
-                        <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
-                    </div>
-                </div>
 
-                <div class="modul-nilai-item">
-                    <div class="item-left">
-                        <div class="item-icon">&lt;&gt;</div>
-                        <div>
-                            <h4 class="item-modul-title">Static Analysis Techniques</h4>
-                            <span class="item-modul-sub">Modul 2 • 15 Pertanyaan</span>
+                @forelse($nilaiPerModul ?? [] as $item)
+                    <div class="modul-nilai-item">
+                        <div class="item-left">
+                            <div class="item-icon">📚</div>
+                            <div>
+                                <h4 class="item-modul-title">{{ $item->nama_modul }}</h4>
+                                <span class="item-modul-sub">
+                                    {{ $item->kategori ?? 'Modul Pembelajaran' }}
+                                    @if($item->total_soal > 0)
+                                        &bull; {{ $item->total_soal }} Pertanyaan
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <div class="score-info">
+                                <span class="item-score">{{ $item->nilai }}/100</span>
+                                <span class="item-status {{ $item->status_class }}">{{ $item->status }}</span>
+                            </div>
+                            <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
                         </div>
                     </div>
-                    <div class="item-right">
-                        <div class="score-info">
-                            <span class="item-score">82/100</span>
-                            <span class="item-status status-lulus">Lulus</span>
-                        </div>
-                        <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
+                @empty
+                    <div style="padding: 32px 0; text-align: center; color: #64748B; font-size: 14px; background: #FFFFFF; border-radius: 12px;">
+                        <p style="margin: 0;">Belum ada nilai kuis yang tercatat.</p>
+                        <p style="margin: 8px 0 0 0; font-size: 13px;">Selesaikan kuis pada halaman <a href="{{ route('siswa.materi') }}" style="color: #00288A; font-weight: 700;">Materi</a> untuk melihat nilai Anda di sini.</p>
                     </div>
-                </div>
-
-                <div class="modul-nilai-item">
-                    <div class="item-left">
-                        <div class="item-icon">📊</div>
-                        <div>
-                            <h4 class="item-modul-title">Behavioral Analysis</h4>
-                            <span class="item-modul-sub">Modul 3 • 20 Pertanyaan</span>
-                        </div>
-                    </div>
-                    <div class="item-right">
-                        <div class="score-info">
-                            <span class="item-score">90/100</span>
-                            <span class="item-status status-sangat-baik">Sangat Baik</span>
-                        </div>
-                        <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
-                    </div>
-                </div>
+                @endforelse
 
             </div>
         </div>

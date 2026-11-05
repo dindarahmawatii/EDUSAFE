@@ -305,6 +305,14 @@
     color: #059669;
 }
 
+.status-remedial {
+    color: #DC2626;
+}
+
+.status-belum {
+    color: #94A3B8;
+}
+
 .item-arrow {
     font-size: 22px;
     color: #94A3B8;
