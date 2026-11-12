@@ -259,4 +259,197 @@ class AdminController extends Controller
         if (!$deleted) return response()->json(['message' => 'Soal tidak ditemukan.'], 404);
         return response()->json(['success' => true, 'message' => 'Soal berhasil dihapus.']);
     }
+
+    /**
+     * Halaman rekapitulasi pembelajaran admin: ringkasan progres modul, durasi belajar, target mingguan, dan riwayat penyelesaian.
+     */
+    public function rekap(): View
+    {
+        $totalModul = 0;
+        $totalModulSelesai = 0;
+        $totalSiswa = 0;
+
+        try {
+            $totalModul = Materi::count();
+            $totalSiswa = User::where('role', '!=', 'admin')->count() ?: 1;
+
+            if (Schema::hasTable('progres_membaca')) {
+                $totalModulSelesai = DB::table('progres_membaca')
+                    ->where('status_selesai', 1)
+                    ->count();
+            }
+        } catch (\Throwable $e) {
+            $totalModul = 0;
+            $totalModulSelesai = 0;
+            $totalSiswa = 1;
+        }
+
+        // 2. Waktu Belajar Kumulatif
+        // Dihitung aktual dari modul selesai (estimasi 45 menit/modul) + pengerjaan kuis (15 menit/kuis)
+        $waktuBelajarFormatted = '0j 0m';
+        try {
+            $kuisCount = 0;
+            if (Schema::hasTable('mengerjakan_kuis')) {
+                $kuisCount = DB::table('mengerjakan_kuis')->count();
+            }
+            $totalMenit = ($totalModulSelesai * 45) + ($kuisCount * 15);
+            $jam = floor($totalMenit / 60);
+            $menit = $totalMenit % 60;
+            $waktuBelajarFormatted = "{$jam}j {$menit}m";
+        } catch (\Throwable $e) {
+            $waktuBelajarFormatted = '0j 0m';
+        }
+
+        // 3. Target Mingguan (8 Modul)
+        $targetMingguan = 8;
+        $capaianMingguan = 0;
+        try {
+            if (Schema::hasTable('progres_membaca')) {
+                $capaianMingguan = DB::table('progres_membaca')
+                    ->where('status_selesai', 1)
+                    ->where('updated_at', '>=', now()->startOfWeek())
+                    ->count();
+
+                // Jika minggu ini belum ada penyelesaian baru, ambil dari 7 hari terakhir
+                if ($capaianMingguan === 0) {
+                    $capaianMingguan = DB::table('progres_membaca')
+                        ->where('status_selesai', 1)
+                        ->where('updated_at', '>=', now()->subDays(7))
+                        ->count();
+                }
+            }
+        } catch (\Throwable $e) {
+            $capaianMingguan = 0;
+        }
+
+        $persenTarget = $targetMingguan > 0 ? min(100, (int) round(($capaianMingguan / $targetMingguan) * 100)) : 0;
+        $statusTarget = 'Baru Dimulai';
+        if ($persenTarget >= 100) {
+            $statusTarget = 'Target Tercapai';
+        } elseif ($persenTarget >= 75) {
+            $statusTarget = 'Hampir Selesai';
+        } elseif ($persenTarget >= 40) {
+            $statusTarget = 'Sedang Berjalan';
+        }
+
+        // 4. Data Rekap per Modul (Tingkat Penyelesaian & Status)
+        $rekapModul = collect();
+        try {
+            $materiList = Materi::orderBy((new Materi)->getKeyName())->get();
+            $materiPk = (new Materi)->getKeyName();
+
+            $rekapModul = $materiList->map(function ($m) use ($totalSiswa, $materiPk) {
+                $mId = $m->{$materiPk} ?? $m->idmateri ?? $m->id;
+                $selesai = 0;
+
+                if (Schema::hasTable('progres_membaca')) {
+                    $selesai = DB::table('progres_membaca')
+                        ->where('idmateri', $mId)
+                        ->where('status_selesai', 1)
+                        ->count();
+                }
+
+                $persen = $totalSiswa > 0 ? min(100, (int) round(($selesai / $totalSiswa) * 100)) : 0;
+
+                if ($selesai >= $totalSiswa && $totalSiswa > 0) {
+                    $status = 'Selesai';
+                    $statusClass = 'badge-status-green';
+                } elseif ($selesai > 0) {
+                    $status = 'Berjalan';
+                    $statusClass = 'badge-status-blue';
+                } else {
+                    $status = 'Belum Dimulai';
+                    $statusClass = 'badge-status-yellow';
+                }
+
+                $durasi = (!empty($m->durasi)) ? $m->durasi : '45 Menit';
+
+                return (object) [
+                    'id' => $mId,
+                    'judul' => $m->namamateri ?? $m->judul ?? 'Modul Pembelajaran',
+                    'kategori' => $m->kategori ?? 'Cybersecurity Dasar',
+                    'durasi' => $durasi,
+                    'selesai_count' => $selesai,
+                    'total_siswa' => $totalSiswa,
+                    'persen' => $persen,
+                    'status' => $status,
+                    'status_class' => $statusClass,
+                ];
+            });
+        } catch (\Throwable $e) {
+            $rekapModul = collect();
+        }
+
+        // 5. Riwayat Penyelesaian Modul Siswa (Log Detail Semua Siswa)
+        $riwayatSiswa = collect();
+        try {
+            if (Schema::hasTable('progres_membaca') && Schema::hasTable('materi')) {
+                $materiPk = (new Materi)->getKeyName();
+
+                $query = DB::table('progres_membaca')
+                    ->join('users', 'progres_membaca.iduser', '=', 'users.id')
+                    ->join('materi', 'progres_membaca.idmateri', '=', 'materi.' . $materiPk)
+                    ->where('progres_membaca.status_selesai', 1)
+                    ->select(
+                        'users.id as user_id',
+                        'users.name as user_name',
+                        'users.email as user_email',
+                        'materi.' . $materiPk . ' as materi_id',
+                        'materi.namamateri',
+                        'materi.kategori',
+                        'progres_membaca.updated_at as tanggal_selesai'
+                    );
+
+                if (Schema::hasColumn('progres_membaca', 'updated_at')) {
+                    $query->orderByDesc('progres_membaca.updated_at');
+                }
+
+                $riwayatSiswa = $query->get()->map(function ($item) {
+                    $nilai = null;
+                    $statusKuis = 'Belum Kuis';
+
+                    if (Schema::hasTable('mengerjakan_kuis')) {
+                        $kuisQuery = DB::table('mengerjakan_kuis')
+                            ->where('iduser', $item->user_id);
+
+                        if (Schema::hasColumn('mengerjakan_kuis', 'idmateri')) {
+                            $kuisQuery->where('idmateri', $item->materi_id);
+                        }
+
+                        $kuis = $kuisQuery->orderByDesc('idmengerjakan')->first();
+
+                        if ($kuis) {
+                            $nilai = $kuis->nilai_akhir ?? null;
+                            $statusKuis = $kuis->status_kelulusan ?? ($nilai >= 70 ? 'LULUS' : 'TIDAK LULUS');
+                        }
+                    }
+
+                    return (object) [
+                        'user_name' => $item->user_name,
+                        'user_email' => $item->user_email,
+                        'modul' => $item->namamateri ?? 'Modul Pembelajaran',
+                        'kategori' => $item->kategori ?? 'Cybersecurity',
+                        'tanggal_selesai' => !empty($item->tanggal_selesai) ? date('d M Y, H:i', strtotime($item->tanggal_selesai)) : '-',
+                        'nilai' => $nilai,
+                        'status_kuis' => $statusKuis,
+                    ];
+                });
+            }
+        } catch (\Throwable $e) {
+            $riwayatSiswa = collect();
+        }
+
+        return view('admin.rekap', compact(
+            'totalModul',
+            'totalModulSelesai',
+            'totalSiswa',
+            'waktuBelajarFormatted',
+            'targetMingguan',
+            'capaianMingguan',
+            'persenTarget',
+            'statusTarget',
+            'rekapModul',
+            'riwayatSiswa'
+        ));
+    }
 }

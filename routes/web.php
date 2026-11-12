@@ -69,7 +69,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
 
     Route::view('/laporan', 'admin.laporan')->name('laporan');
-    Route::view('/rekap', 'admin.rekap')->name('rekap');
+    Route::get('/rekap', [AdminController::class, 'rekap'])->name('rekap');
 
     Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');
 
