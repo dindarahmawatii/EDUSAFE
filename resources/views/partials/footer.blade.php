@@ -1,7 +1,7 @@
 <footer class="footer">
     <div class="footer-content">
         <div class="footer-brand">
-            <strong>EduQuiz</strong>
+            <strong>EduSafe</strong>
             <small>&copy; 2026 Politeknik Negeri Madiun</small>
         </div>
 

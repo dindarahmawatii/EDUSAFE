@@ -113,7 +113,7 @@
                                 <span class="item-score">{{ $item->nilai }}/100</span>
                                 <span class="item-status {{ $item->status_class }}">{{ $item->status }}</span>
                             </div>
-                            <a href="{{ route('siswa.review') }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>
+                                <a href="{{ route('siswa.review.detail', $item->id ?? 1) }}" class="item-arrow" style="text-decoration:none;">&rsaquo;</a>  
                         </div>
                     </div>
                 @empty

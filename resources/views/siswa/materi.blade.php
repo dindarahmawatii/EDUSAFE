@@ -55,7 +55,7 @@
 
                         @if($index === 0)
                             <div class="thumb-mockup">
-                                <small>EduQuiz</small>
+                                <small>EduSafe</small>
                             </div>
                         @else
                             <div class="thumb-icon">

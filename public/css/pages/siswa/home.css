@@ -1,43 +1,111 @@
 /* ==========================================================================
-   public/css/pages/siswa/home.css - Beranda Siswa (Sesuai Mockup DPPL)
+   public/css/pages/siswa/home.css - Beranda Siswa (Interaktif & Modern)
    ========================================================================== */
+
+/* 1. Smooth Scroll Global */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Offset agar saat scroll ke #materi-section tidak tertutup navbar atas */
+#materi-section {
+    scroll-margin-top: 80px;
+}
+
+/* 2. Keyframes Animasi Masuk (Fade In Up) */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 /* Hero Banner Gradasi Horizontal */
 .hero-banner {
     background: linear-gradient(90deg, #2D5EAD 0%, #4A8EDB 40%, #BBE0F9 100%);
-    padding: 70px 20px 80px;
+    padding: 100px 20px 110px;
     text-align: center;
     width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 .hero-title {
-    font-size: 56px;
+    font-size: 68px;
     font-weight: 800;
     color: #111827;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     letter-spacing: -1px;
+    /* Animasi muncul pertama */
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hero-subtitle {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
     color: #1F2937;
-    margin-bottom: 28px;
+    margin-bottom: 36px;
+    /* Animasi muncul kedua (delay 0.12s) */
+    opacity: 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
 }
 
 .hero-actions {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 16px;
+    /* Animasi muncul ketiga (delay 0.24s) */
+    opacity: 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
 }
 
+/* 3. Tombol Interaktif dengan Efek Kilau (Shine) & Lift */
 .hero-actions .btn {
-    padding: 9px 28px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    padding: 13px 38px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.25s ease, 
+                background-color 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Kilau cahaya melintas saat hover */
+.hero-actions .btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.35),
+        transparent
+    );
+    transition: left 0.55s ease;
+}
+
+.hero-actions .btn:hover::after {
+    left: 130%;
+}
+
+/* Efek saat tombol ditekan */
+.hero-actions .btn:active {
+    transform: translateY(0) scale(0.97);
 }
 
 /* Tombol Materi (Abu Terang) */
@@ -46,8 +114,11 @@
     color: #1A1A1A;
     border: 1px solid #CBD5E1;
 }
+
 .hero-actions .btn-light:hover {
-    background-color: #D4D6D9;
+    background-color: #FFFFFF;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
 }
 
 /* Tombol Kuis (Hitam Gelap) */
@@ -56,11 +127,16 @@
     color: #FFFFFF;
     border: 1px solid transparent;
 }
+
 .hero-actions .btn-dark:hover {
-    background-color: #111111;
+    background-color: #111827;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
 }
 
-/* Section Grid Materi */
+/* ==========================================================================
+   Section Grid Materi (Cadangan / Opsional)
+   ========================================================================== */
 .materi-section {
     max-width: 1140px;
     margin: 0 auto;
@@ -89,7 +165,6 @@
     gap: 22px;
 }
 
-/* Card Kartu Materi (Biru Muda Sesuai Mockup) */
 .materi-card {
     background-color: #C3E2F6;
     border-radius: 12px;
@@ -98,12 +173,12 @@
     display: block;
     min-height: 150px;
     text-decoration: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
 }
 
 .materi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(45, 94, 173, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(45, 94, 173, 0.16);
 }
 
 .materi-card-title {
@@ -138,6 +213,9 @@
         grid-template-columns: 1fr;
     }
     .hero-title {
-        font-size: 40px;
+        font-size: 44px;
+    }
+    .hero-banner {
+        padding: 70px 20px;
     }
 }
