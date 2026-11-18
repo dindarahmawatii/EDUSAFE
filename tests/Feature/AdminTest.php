@@ -11,9 +11,56 @@ class AdminTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function createAdmin(): User
+    {
+        return User::factory()->create([
+            'role' => 'admin',
+        ]);
+    }
+
+    public function test_guest_is_redirected_to_login_when_accessing_admin_routes(): void
+    {
+        $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
+        $this->get(route('admin.data-pelajar'))->assertRedirect(route('login'));
+        $this->get(route('admin.rekap'))->assertRedirect(route('login'));
+        $this->get(route('admin.evaluasi'))->assertRedirect(route('login'));
+        $this->get(route('admin.laporan'))->assertRedirect(route('login'));
+
+        $this->post(route('admin.materi.store'), [
+            'judul' => 'Materi Ilegal',
+        ])->assertRedirect(route('login'));
+
+        $this->post(route('admin.kuis.store'), [
+            'pertanyaan' => 'Soal Ilegal',
+        ])->assertRedirect(route('login'));
+    }
+
+    public function test_regular_user_gets_403_forbidden_when_accessing_admin_routes(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'user',
+        ]);
+
+        $this->actingAs($user)->get(route('admin.dashboard'))->assertForbidden();
+        $this->actingAs($user)->get(route('admin.data-pelajar'))->assertForbidden();
+        $this->actingAs($user)->get(route('admin.rekap'))->assertForbidden();
+        $this->actingAs($user)->get(route('admin.evaluasi'))->assertForbidden();
+        $this->actingAs($user)->get(route('admin.laporan'))->assertForbidden();
+
+        $this->actingAs($user)->post(route('admin.materi.store'), [
+            'judul' => 'Materi Hacker',
+        ])->assertForbidden();
+
+        $this->actingAs($user)->post(route('admin.kuis.store'), [
+            'pertanyaan' => 'Soal Hacker',
+        ])->assertForbidden();
+    }
+
     public function test_admin_dashboard_can_be_accessed(): void
     {
-        $response = $this->get(route('admin.dashboard'));
+        $admin = $this->createAdmin();
+
+        $response = $this->actingAs($admin)->get(route('admin.dashboard'));
 
         $response->assertOk();
         $response->assertSee('Dashboard Admin');
@@ -22,6 +69,8 @@ class AdminTest extends TestCase
 
     public function test_admin_can_store_new_materi_successfully(): void
     {
+        $admin = $this->createAdmin();
+
         $payload = [
             'judul' => 'Keamanan Jaringan & Firewall',
             'kategori' => 'Network Security',
@@ -29,7 +78,7 @@ class AdminTest extends TestCase
             'konten' => 'Firewall bertindak sebagai penghalang antara jaringan internal tepercaya dan jaringan luar.',
         ];
 
-        $response = $this->post(route('admin.materi.store'), $payload);
+        $response = $this->actingAs($admin)->post(route('admin.materi.store'), $payload);
 
         $response->assertRedirect(route('admin.dashboard'));
         $response->assertSessionHas('success', 'Materi berhasil ditambahkan!');
@@ -41,6 +90,8 @@ class AdminTest extends TestCase
 
     public function test_admin_dashboard_displays_synchronized_user_count_and_recent_users(): void
     {
+        $admin = $this->createAdmin();
+
         User::factory()->create([
             'name' => 'Budi Santoso',
             'email' => 'budi@example.com',
@@ -50,11 +101,11 @@ class AdminTest extends TestCase
             'email' => 'siti@example.com',
         ]);
 
-        $response = $this->get(route('admin.dashboard'));
+        $response = $this->actingAs($admin)->get(route('admin.dashboard'));
 
         $response->assertOk();
         $response->assertSee('Total User');
-        $response->assertSee('2'); // total user count
+        $response->assertSee('3'); // admin + 2 user
         $response->assertSee('Budi Santoso');
         $response->assertSee('budi@example.com');
         $response->assertSee('Siti Aminah');
@@ -63,12 +114,14 @@ class AdminTest extends TestCase
 
     public function test_admin_data_pelajar_page_displays_users_from_database(): void
     {
+        $admin = $this->createAdmin();
+
         User::factory()->create([
             'name' => 'Ahmad Dahlan',
             'email' => 'ahmad@example.com',
         ]);
 
-        $response = $this->get(route('admin.data-pelajar'));
+        $response = $this->actingAs($admin)->get(route('admin.data-pelajar'));
 
         $response->assertOk();
         $response->assertSee('Ahmad Dahlan');
@@ -132,6 +185,8 @@ class AdminTest extends TestCase
 
     public function test_admin_rekap_page_displays_actual_data_from_database(): void
     {
+        $admin = $this->createAdmin();
+
         // Buat materi modul
         Materi::create([
             'namamateri' => 'Analisis Forensic Digital',
@@ -140,7 +195,7 @@ class AdminTest extends TestCase
             'konten' => 'Metodologi dan chain of custody forensik digital.',
         ]);
 
-        $response = $this->get(route('admin.rekap'));
+        $response = $this->actingAs($admin)->get(route('admin.rekap'));
 
         $response->assertOk();
         $response->assertSee('Rekap Pembelajaran Sistem');
