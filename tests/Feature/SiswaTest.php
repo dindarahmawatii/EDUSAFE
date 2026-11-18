@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Materi;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -46,5 +47,28 @@ class SiswaTest extends TestCase
         $this->actingAs($user)->get(route('siswa.nilai'))
             ->assertOk()
             ->assertSee('Skor Akhir');
+    }
+
+    public function test_user_rekap_page_displays_actual_data_from_database(): void
+    {
+        $user = User::factory()->create();
+
+        Materi::create([
+            'namamateri' => 'Analisis Vektor Serangan Malware',
+            'kategori' => 'Threat Intelligence',
+            'deskripsi' => 'Pengenalan analisis vektor infeksi siber.',
+            'konten' => 'Penjelasan lengkap vektor serangan.',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('siswa.rekap'));
+
+        $response->assertOk();
+        $response->assertSee('Rekap Pembelajaran');
+        $response->assertSee('TOTAL MODUL SELESAI');
+        $response->assertSee('WAKTU BELAJAR');
+        $response->assertSee('Target Mingguan');
+        $response->assertSee('MATERI PEMBELAJARAN');
+        $response->assertSee('Analisis Vektor Serangan Malware');
+        $response->assertSee('Threat Intelligence');
     }
 }

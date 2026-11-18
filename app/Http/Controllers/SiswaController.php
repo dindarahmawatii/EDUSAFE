@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class SiswaController extends Controller
@@ -401,24 +402,154 @@ class SiswaController extends Controller
     {
         $userId = Auth::id() ?? 1;
         $totalSelesai = 0;
-        $riwayatKuis = collect();
+        $totalModul = 0;
+        $waktuBelajarFormatted = '0j 0m';
+        $targetMingguan = 8;
+        $capaianMingguan = 0;
+        $persenTarget = 0;
+        $persenSelesai = 0;
+        $daftarRekap = collect();
 
         try {
-            $totalSelesai = DB::table('progres_membaca')
-                ->where('iduser', $userId)
-                ->where('status_selesai', 1)
-                ->count();
+            $totalModul = Materi::count() ?: 6;
 
-            $riwayatKuis = DB::table('mengerjakan_kuis')
-                ->join('kuis', 'mengerjakan_kuis.idkuis', '=', 'kuis.idkuis')
-                ->where('mengerjakan_kuis.iduser', $userId)
-                ->orderBy('mengerjakan_kuis.idmengerjakan', 'desc')
-                ->get();
+            if (Schema::hasTable('progres_membaca')) {
+                $totalSelesai = DB::table('progres_membaca')
+                    ->where('iduser', $userId)
+                    ->where('status_selesai', 1)
+                    ->count();
+
+                $capaianMingguan = DB::table('progres_membaca')
+                    ->where('iduser', $userId)
+                    ->where('status_selesai', 1)
+                    ->where('updated_at', '>=', now()->startOfWeek())
+                    ->count();
+
+                if ($capaianMingguan === 0) {
+                    $capaianMingguan = DB::table('progres_membaca')
+                        ->where('iduser', $userId)
+                        ->where('status_selesai', 1)
+                        ->where('updated_at', '>=', now()->subDays(7))
+                        ->count();
+                }
+            }
+
+            $persenTarget = $targetMingguan > 0 ? min(100, (int) round(($capaianMingguan / $targetMingguan) * 100)) : 0;
+            $persenSelesai = $totalModul > 0 ? min(100, (int) round(($totalSelesai / $totalModul) * 100)) : 0;
+
+            // Waktu belajar kumulatif siswa (estimasi 45 menit/modul selesai + 15 menit/kuis)
+            $kuisCount = 0;
+            if (Schema::hasTable('mengerjakan_kuis')) {
+                $kuisCount = DB::table('mengerjakan_kuis')
+                    ->where('iduser', $userId)
+                    ->count();
+            }
+
+            $totalMenit = ($totalSelesai * 45) + ($kuisCount * 15);
+            $jam = floor($totalMenit / 60);
+            $menit = $totalMenit % 60;
+            $waktuBelajarFormatted = "{$jam}j {$menit}m";
+
+            // Mengambil semua modul dan mencocokkan progres user saat ini
+            $materiList = Materi::orderBy((new Materi)->getKeyName())->get();
+            $materiPk = (new Materi)->getKeyName();
+
+            // Mapping progres membaca dan kuis user
+            $userProgresMap = collect();
+            if (Schema::hasTable('progres_membaca')) {
+                $userProgresMap = DB::table('progres_membaca')
+                    ->where('iduser', $userId)
+                    ->get()
+                    ->keyBy('idmateri');
+            }
+
+            $userKuisMap = collect();
+            if (Schema::hasTable('mengerjakan_kuis')) {
+                $kuisQuery = DB::table('mengerjakan_kuis')
+                    ->where('iduser', $userId);
+                if (Schema::hasColumn('mengerjakan_kuis', 'idmateri')) {
+                    $userKuisMap = $kuisQuery->orderByDesc('idmengerjakan')
+                        ->get()
+                        ->groupBy('idmateri');
+                }
+            }
+
+            $iconBoxes = ['dark-blue-icon', 'gray-icon', 'royal-blue-icon', 'light-gray-icon'];
+            $iconEmojis = ['📘', '⚙️', '🛡️', '📊', '🔍', '💻'];
+
+            $daftarRekap = $materiList->values()->map(function ($m, $index) use ($materiPk, $userProgresMap, $userKuisMap, $iconBoxes, $iconEmojis) {
+                $mId = $m->{$materiPk} ?? $m->idmateri ?? $m->id;
+                $progres = $userProgresMap->get($mId);
+                $kuisList = $userKuisMap->get($mId);
+                $kuisTerbaik = $kuisList ? $kuisList->sortByDesc('nilai_akhir')->first() : null;
+
+                $isSelesai = $progres && $progres->status_selesai == 1;
+                $hasAkses = $progres || $kuisTerbaik;
+
+                // Waktu akses terakhir
+                $waktuAkses = '-';
+                if ($progres && !empty($progres->updated_at)) {
+                    $waktuAkses = date('d M Y, H:i', strtotime($progres->updated_at));
+                } elseif ($kuisTerbaik && !empty($kuisTerbaik->tanggal_pengerjaan)) {
+                    $waktuAkses = date('d M Y, H:i', strtotime($kuisTerbaik->tanggal_pengerjaan));
+                }
+
+                // Durasi
+                $durasi = $hasAkses ? (!empty($m->durasi) ? $m->durasi : '45 Menit') : '-';
+
+                // Status
+                if ($isSelesai) {
+                    $status = '✔ Selesai';
+                    $statusClass = 'pill-selesai';
+                } elseif ($hasAkses) {
+                    $status = '⏳ Berjalan';
+                    $statusClass = 'pill-berjalan';
+                } else {
+                    $status = '🔒 Belum Dimulai';
+                    $statusClass = 'pill-terkunci';
+                }
+
+                // Kategori CSS tag
+                $kategori = $m->kategori ?? 'Cybersecurity';
+                $katLower = strtolower($kategori);
+                $tagClass = 'tag-cyber';
+                if (str_contains($katLower, 'forensic')) {
+                    $tagClass = 'tag-forensics';
+                } elseif (str_contains($katLower, 'lab') || str_contains($katLower, 'praktikum')) {
+                    $tagClass = 'tag-lab';
+                }
+
+                return (object) [
+                    'id' => $mId,
+                    'nomor' => $index + 1,
+                    'judul' => $m->namamateri ?? $m->judul ?? 'Modul ' . ($index + 1),
+                    'sub_text' => 'Modul ' . ($index + 1) . ': ' . ($m->kategori ?? 'Pembelajaran'),
+                    'kategori' => $kategori,
+                    'tag_class' => $tagClass,
+                    'icon_box' => $iconBoxes[$index % count($iconBoxes)],
+                    'icon_emoji' => $iconEmojis[$index % count($iconEmojis)],
+                    'waktu_akses' => $waktuAkses,
+                    'durasi' => $durasi,
+                    'status' => $status,
+                    'status_class' => $statusClass,
+                    'nilai_kuis' => $kuisTerbaik?->nilai_akhir ?? null,
+                ];
+            });
+
         } catch (\Throwable $e) {
-            // Gunakan nilai bawaan
+            // Gunakan nilai bawaan jika terjadi kendala
         }
 
-        return view('siswa.rekap', compact('totalSelesai', 'riwayatKuis'));
+        return view('siswa.rekap', compact(
+            'totalSelesai',
+            'totalModul',
+            'persenSelesai',
+            'waktuBelajarFormatted',
+            'targetMingguan',
+            'capaianMingguan',
+            'persenTarget',
+            'daftarRekap'
+        ));
     }
 
     /**

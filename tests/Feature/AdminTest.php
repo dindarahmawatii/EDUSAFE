@@ -129,4 +129,27 @@ class AdminTest extends TestCase
 
         $response->assertRedirect(route('home'));
     }
+
+    public function test_admin_rekap_page_displays_actual_data_from_database(): void
+    {
+        // Buat materi modul
+        Materi::create([
+            'namamateri' => 'Analisis Forensic Digital',
+            'kategori' => 'Digital Forensics',
+            'deskripsi' => 'Pengantar investigasi bukti digital.',
+            'konten' => 'Metodologi dan chain of custody forensik digital.',
+        ]);
+
+        $response = $this->get(route('admin.rekap'));
+
+        $response->assertOk();
+        $response->assertSee('Rekap Pembelajaran Sistem');
+        $response->assertSee('Total Modul Selesai');
+        $response->assertSee('Waktu Belajar Kumulatif');
+        $response->assertSee('Target Mingguan');
+        $response->assertSee('8 Modul Selesai');
+        $response->assertSee('Tingkat Penyelesaian per Modul');
+        $response->assertSee('Riwayat Penyelesaian Modul Semua Siswa');
+        $response->assertSee('Analisis Forensic Digital');
+    }
 }
