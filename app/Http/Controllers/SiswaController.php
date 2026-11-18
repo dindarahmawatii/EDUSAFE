@@ -111,6 +111,10 @@ class SiswaController extends Controller
      */
     public function submitKuis(Request $request): RedirectResponse
     {
+        $request->validate([
+            'materi_id' => 'required|integer',
+        ]);
+        
         $materiId = (int) $request->input('materi_id', 1);
         $daftarSoal = $this->loadSoalFromDatabase($materiId);
         $totalSoal = count($daftarSoal);
