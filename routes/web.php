@@ -69,7 +69,8 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/data-pelajar', [AdminController::class, 'dataPelajar'])->name('data-pelajar');
-    Route::view('/evaluasi', 'admin.evaluasi')->name('evaluasi');
+    Route::get('/evaluasi/{id?}', [AdminController::class, 'evaluasi'])->whereNumber('id')->name('evaluasi');
+    Route::post('/evaluasi/{id}', [AdminController::class, 'storeEvaluasi'])->whereNumber('id')->name('evaluasi.store');
 
     Route::view('/laporan', 'admin.laporan')->name('laporan');
     Route::get('/rekap', [AdminController::class, 'rekap'])->name('rekap');

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EvaluasiInstruktur;
 use App\Models\Materi;
+use App\Models\ProgresMembaca;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -114,6 +116,73 @@ class AdminController extends Controller
         }
 
         return view('admin.data-pelajar', compact('pelajarList', 'totalModul'));
+    }
+
+    /**
+     * Halaman evaluasi: menampilkan siswa terpilih (dari Data Pelajar),
+     * modul terakhir yang dibaca, rerata nilai, form catatan, dan riwayat evaluasi.
+     */
+    public function evaluasi(?int $id = null): View
+    {
+        $siswa = null;
+        $modulTerakhir = null;
+        $rerataNilai = null;
+        $riwayatEvaluasi = collect();
+
+        if ($id !== null) {
+            $siswa = User::findOrFail($id);
+
+            $modulTerakhir = ProgresMembaca::namaMateriTerakhir($siswa->id);
+
+            try {
+                $avg = DB::table('mengerjakan_kuis')
+                    ->where('iduser', $siswa->id)
+                    ->avg('nilai_akhir');
+                $rerataNilai = $avg !== null ? (int) round($avg) : null;
+            } catch (\Throwable $e) {
+                $rerataNilai = null;
+            }
+
+            try {
+                $riwayatEvaluasi = EvaluasiInstruktur::where('iduser', $siswa->id)
+                    ->orderByDesc('created_at')
+                    ->orderByDesc('id')
+                    ->get();
+            } catch (\Throwable $e) {
+                $riwayatEvaluasi = collect();
+            }
+        }
+
+        return view('admin.evaluasi', compact('siswa', 'modulTerakhir', 'rerataNilai', 'riwayatEvaluasi'));
+    }
+
+    /**
+     * Menyimpan evaluasi baru untuk satu siswa (riwayat disimpan, siswa melihat yang terbaru).
+     */
+    public function storeEvaluasi(Request $request, int $id): RedirectResponse
+    {
+        $siswa = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'catatan' => 'required|string|max:5000',
+        ]);
+
+        $data = [
+            'iduser'  => $siswa->id,
+            'idadmin' => $request->user()->id,
+            'catatan' => $validated['catatan'],
+        ];
+
+        // Tabel di MySQL kamu sudah punya kolom user_id (wajib diisi), jadi ikut diisi.
+        if (Schema::hasColumn('evaluasi_instruktur', 'user_id')) {
+            $data['user_id'] = $siswa->id;
+        }
+
+        EvaluasiInstruktur::create($data);
+
+        return redirect()
+            ->route('admin.evaluasi', $siswa->id)
+            ->with('success', 'Evaluasi untuk ' . $siswa->name . ' berhasil disimpan.');
     }
 
     /**
