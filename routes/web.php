@@ -55,14 +55,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/rekap', 'rekap')->name('rekap');
 
         // Rute untuk menampilkan list card materi review
-        Route::get('/review-jawaban', function () {
-            return view('siswa.review');
-        })->name('review');
+        Route::get('/review-jawaban', 'review')->name('review');
 
         // Rute untuk menampilkan detail soal berdasarkan ID materi
-        Route::get('/review-jawaban/{id}', function ($id) {
-            return view('siswa.review-detail');
-        })->name('review.detail');
+        Route::get('/review-jawaban/{id}', 'reviewDetail')->name('review.detail');
     });
 
 });

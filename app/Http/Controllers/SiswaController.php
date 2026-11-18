@@ -553,6 +553,181 @@ class SiswaController extends Controller
     }
 
     /**
+     * Halaman daftar modul untuk review pembahasan kuis.
+     * Hanya menampilkan modul yang sudah selesai dikerjakan oleh siswa.
+     */
+    public function review(): View
+    {
+        $userId = Auth::id() ?? 1;
+        $reviewModulList = collect();
+
+        try {
+            $materiList = Materi::orderBy((new Materi)->getKeyName())->get();
+            $materiPk = (new Materi)->getKeyName();
+
+            // Ambil pengerjaan kuis user dikelompokkan per idmateri
+            $userKuisMap = collect();
+            if (Schema::hasTable('mengerjakan_kuis')) {
+                $query = DB::table('mengerjakan_kuis')->where('iduser', $userId);
+                if (Schema::hasColumn('mengerjakan_kuis', 'idmateri')) {
+                    $query->whereNotNull('idmateri');
+                }
+                $userKuisMap = $query->orderBy('idmengerjakan', 'desc')
+                    ->get()
+                    ->groupBy('idmateri');
+            }
+
+            $badgeColors = [
+                ['bg' => '#DDF0FF', 'color' => '#00288A'],
+                ['bg' => '#FEF3C7', 'color' => '#D97706'],
+                ['bg' => '#EDE9FE', 'color' => '#6D28D9'],
+                ['bg' => '#DCFCE7', 'color' => '#15803D'],
+                ['bg' => '#FCE7F3', 'color' => '#BE185D'],
+                ['bg' => '#E0F2FE', 'color' => '#0369A1'],
+            ];
+
+            // Filter: Hanya tampilkan modul yang SUDAH dikerjakan kuisnya oleh siswa
+            $reviewModulList = $materiList->values()->map(function ($m, $index) use ($materiPk, $userKuisMap, $badgeColors) {
+                $mId = $m->{$materiPk} ?? $m->idmateri ?? $m->id;
+                $nomor = str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+
+                $kuisAttempts = $userKuisMap->get($mId);
+
+                // Jika belum pernah dikerjakan kuisnya, sembunyikan (hide) dari daftar review
+                if (! $kuisAttempts || $kuisAttempts->isEmpty()) {
+                    return null;
+                }
+
+                $latestKuis = $kuisAttempts->first();
+                $bestKuis = $kuisAttempts->sortByDesc('nilai_akhir')->first();
+
+                $tanggal = (! empty($latestKuis->tanggal_pengerjaan))
+                    ? date('d M Y', strtotime($latestKuis->tanggal_pengerjaan))
+                    : date('d M Y');
+
+                $skor = $bestKuis ? (int) $bestKuis->nilai_akhir : (int) $latestKuis->nilai_akhir;
+                $colorScheme = $badgeColors[$index % count($badgeColors)];
+
+                return (object) [
+                    'id' => $mId,
+                    'nomor_modul' => $nomor,
+                    'judul' => $m->namamateri ?? $m->judul ?? 'Modul ' . $nomor,
+                    'kategori' => $m->kategori ?? 'Cybersecurity Fundamentals',
+                    'tanggal_selesai' => $tanggal,
+                    'skor' => $skor,
+                    'badge_bg' => $colorScheme['bg'],
+                    'badge_color' => $colorScheme['color'],
+                ];
+            })->filter()->values();
+        } catch (\Throwable $e) {
+            $reviewModulList = collect();
+        }
+
+        return view('siswa.review', compact('reviewModulList'));
+    }
+
+    /**
+     * Halaman detail review pembahasan jawaban kuis per modul materi.
+     */
+    public function reviewDetail(int|string $id = 1): View|RedirectResponse
+    {
+        $userId = Auth::id() ?? 1;
+        $materiId = (int) $id;
+
+        // Ambil riwayat pengerjaan terakhir user untuk materi ini
+        $riwayatKuis = null;
+        if (Auth::check() && Schema::hasTable('mengerjakan_kuis')) {
+            try {
+                $query = DB::table('mengerjakan_kuis')->where('iduser', $userId);
+                if (Schema::hasColumn('mengerjakan_kuis', 'idmateri')) {
+                    $query->where('idmateri', $materiId);
+                }
+                $riwayatKuis = $query->orderByDesc('idmengerjakan')->first();
+            } catch (\Throwable $e) {
+                $riwayatKuis = null;
+            }
+        }
+
+        // Jika modul ini belum pernah dikerjakan oleh user, sembunyikan dan arahkan kembali
+        if (! $riwayatKuis) {
+            return redirect()->route('siswa.review')->with('warning', 'Modul ini belum dikerjakan. Silakan selesaikan kuis terlebih dahulu untuk melihat pembahasan.');
+        }
+
+        $materi = null;
+        try {
+            $materi = Materi::find($materiId);
+        } catch (\Throwable $e) {
+            $materi = null;
+        }
+
+        // Tentukan nomor urut modul berdasarkan urutan di database
+        $nomorModul = '01';
+        try {
+            $materiList = Materi::orderBy((new Materi)->getKeyName())->pluck((new Materi)->getKeyName())->toArray();
+            $index = array_search($materiId, $materiList);
+            if ($index !== false) {
+                $nomorModul = str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+            } else {
+                $nomorModul = str_pad((string) $materiId, 2, '0', STR_PAD_LEFT);
+            }
+        } catch (\Throwable $e) {
+            $nomorModul = str_pad((string) $materiId, 2, '0', STR_PAD_LEFT);
+        }
+
+        $namaModul = ($materi && ! empty($materi->judul))
+            ? $materi->judul
+            : 'Modul ' . $nomorModul . ' - ' . ($materi->namamateri ?? 'Pembahasan Kuis');
+
+        // Mengambil soal-soal kuis materi ini dari database
+        $daftarSoal = $this->loadSoalFromDatabase($materiId);
+
+        $hasPengerjaan = true;
+        $skor = (int) $riwayatKuis->nilai_akhir;
+        $tanggalPengerjaan = (! empty($riwayatKuis->tanggal_pengerjaan))
+            ? date('d F Y', strtotime($riwayatKuis->tanggal_pengerjaan))
+            : now()->translatedFormat('d F Y');
+
+        // Decode jawaban user dari json
+        $jawabanUserMap = [];
+        if ($riwayatKuis && ! empty($riwayatKuis->jawabanKuis)) {
+            $decoded = json_decode($riwayatKuis->jawabanKuis, true);
+            if (is_array($decoded)) {
+                $jawabanUserMap = $decoded;
+            }
+        }
+
+        // Hitung total benar dan salah
+        $totalBenar = 0;
+        $totalSalah = 0;
+        foreach ($daftarSoal as $num => $soal) {
+            $userAns = $jawabanUserMap[$num] ?? $jawabanUserMap[(string) $num] ?? null;
+            if ($userAns !== null && $userAns === $soal['jawaban_benar']) {
+                $totalBenar++;
+            } else {
+                $totalSalah++;
+            }
+        }
+
+        $totalSoalCount = count($daftarSoal);
+        $poinPerSoal = $totalSoalCount > 0 ? (int) round(100 / $totalSoalCount) : 10;
+
+        return view('siswa.review-detail', compact(
+            'materiId',
+            'materi',
+            'nomorModul',
+            'namaModul',
+            'daftarSoal',
+            'jawabanUserMap',
+            'hasPengerjaan',
+            'skor',
+            'tanggalPengerjaan',
+            'totalBenar',
+            'totalSalah',
+            'poinPerSoal'
+        ));
+    }
+
+    /**
      * Logout sesi siswa.
      */
     public function logout(Request $request): RedirectResponse
