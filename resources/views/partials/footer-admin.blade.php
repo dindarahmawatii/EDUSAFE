@@ -1,8 +1,8 @@
 <footer class="admin-footer">
     <div class="admin-footer-container">
         <div class="admin-footer-left">
-            <h4>EduQuiz</h4>
-            <p>&copy; {{ date('Y') }} EduQuiz. Platform Pembelajaran Online Malware.</p>
+            <h4>EduSafe</h4>
+            <p>&copy; {{ date('Y') }} EduSafe. Platform Pembelajaran Online Malware.</p>
         </div>
         <div class="admin-footer-links">
             <a href="#">Privacy Policy</a>

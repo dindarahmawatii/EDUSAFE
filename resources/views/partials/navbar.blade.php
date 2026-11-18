@@ -1,5 +1,5 @@
 <nav class="navbar">
-    <a href="{{ route('home') }}" class="brand">EduQuiz</a>
+    <a href="{{ route('home') }}" class="brand">EduSafe</a>
 
     <div class="nav-right">
         <ul class="nav-links">
@@ -10,15 +10,11 @@
         </ul>
 
         <div class="nav-auth" style="display: flex; align-items: center; gap: 10px;">
-            <!-- Tombol Masuk & Daftar Sesuai Mockup DPPL -->
-            <a href="{{ route('login') }}" class="btn btn-sky">Masuk</a>
-            <a href="{{ route('register') }}" class="btn btn-blue">Daftar</a>
-
-            <!-- Tombol Logout Kecil Khusus Test -->
+            <!-- Tombol Logout Utama (Menggantikan Masuk/Daftar & Logout Test) -->
             <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                 @csrf
-                <button type="submit" class="btn-logout-test" title="Logout untuk testing">
-                    🚪 Logout Test
+                <button type="submit" style="background: #00288A; color: #FFFFFF; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.2s;">
+                    🚪 Keluar
                 </button>
             </form>
         </div>

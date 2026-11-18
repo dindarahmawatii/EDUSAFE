@@ -2,7 +2,7 @@
     <div class="admin-nav-container">
         <!-- Logo Brand -->
         <a href="{{ route('admin.dashboard') }}" class="admin-brand">
-            EduQuiz <span class="admin-badge-mode">Admin Panel</span>
+            EduSafe <span class="admin-badge-mode">Admin Panel</span>
         </a>
 
         <!-- Menu Navigasi Utama -->
