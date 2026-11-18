@@ -1,0 +1,53 @@
+/* ================================================= */
+/* STYLING NAVBAR ADMIN                              */
+/* ================================================= */
+
+nav, .navbar-admin, header nav {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Bagian Logo / Brand */
+.navbar-brand, nav a:first-child {
+    font-size: 18px;
+    font-weight: 800;
+    color: #00288A;
+    text-decoration: none;
+}
+
+/* List Menu Navigasi */
+.navbar-menu, nav ul, .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 28px;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-menu a, nav a, .nav-links a {
+    color: #475569;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.navbar-menu a:hover, .navbar-menu a.active, nav a:hover {
+    color: #00288A;
+}
+
+/* Tombol Logout / Aksi Kanan */
+.navbar-end, .admin-profile-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
