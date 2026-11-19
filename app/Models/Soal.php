@@ -16,7 +16,6 @@ class Soal extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'idsoal',
         'idkuis',
         'pertanyaan',
         'pilihan_a',

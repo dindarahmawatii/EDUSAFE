@@ -61,7 +61,7 @@
             <div class="stat-card">
                 <div class="stat-card-header">
                     <div class="stat-icon">⏱</div>
-                    <span class="stat-trend active-tag">Active</span>
+                    <span class="stat-trend active-tag">Aktif</span>
                 </div>
                 <div>
                     <p class="stat-label">Kuis Berjalan</p>

@@ -16,8 +16,6 @@ class ProgresMembaca extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'idprogres',
-        'iduser',
         'idmateri',
         'status_selesai',
         'updated_at',

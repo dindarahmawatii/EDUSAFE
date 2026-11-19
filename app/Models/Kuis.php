@@ -16,7 +16,6 @@ class Kuis extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'idkuis',
         'namakuis',
         'deskripsi',
         'waktuPengerjaan',

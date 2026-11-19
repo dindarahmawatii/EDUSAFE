@@ -52,12 +52,12 @@
                 </div>
 
                 <button type="submit" id="btn-submit" class="btn btn-dark btn-block">
-                    <span id="btn-text">Sign In</span>
+                    <span id="btn-text">Daftar</span>
                 </button>
             </form>
 
             <div class="auth-links">
-                <a href="{{ route('forgot-password') }}" class="link-forgot">Forgot password?</a>
+                <a href="{{ route('forgot-password') }}" class="link-forgot">Lupa Password?</a>
                 <a href="{{ route('register') }}" class="link-register">Buat Akun</a>
             </div>
         </div>

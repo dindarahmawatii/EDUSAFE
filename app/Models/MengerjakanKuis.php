@@ -16,14 +16,10 @@ class MengerjakanKuis extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'idmengerjakan',
-        'iduser',
-        'idkuis',
-        'idmateri',
-        'jawabanKuis',
-        'nilai_akhir',
-        'status_kelulusan',
-        'tanggal_pengerjaan',
+    'idkuis',
+    'idmateri',
+    'jawabanKuis',
+    'tanggal_pengerjaan',
     ];
 
     public function getKeyName(): string

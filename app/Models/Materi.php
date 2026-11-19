@@ -15,7 +15,6 @@ class Materi extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'idmateri',
         'namamateri',
         'konten',
         'kategori',
