@@ -27,13 +27,13 @@
                         <h3 class="profile-name">{{ Auth::user()?->name ?? 'Rizky Pratama' }}</h3>
                         <span class="badge-active">ACTIVE SCHOLAR</span>
                     </div>
-                    <p class="profile-meta">ID: <strong>EDU-{{ str_pad((string)(Auth::id() ?? 1), 4, '0', STR_PAD_LEFT) }}</strong> &bull; Modul Saat Ini: <strong>Pengenalan Malware & Ancaman Siber</strong></p>
+                    <p class="profile-meta">ID: <strong>EDU-{{ str_pad((string)(Auth::id() ?? 1), 4, '0', STR_PAD_LEFT) }}</strong> &bull; Modul Terakhir: <strong>{{ $modulTerakhir ?? 'Belum ada modul yang dibaca' }}</strong></p>
                 </div>
             </div>
 
             <div class="profile-stats-right">
                 <div class="stat-box">
-                    <span class="stat-value">{{ $rerataKuis ?? 88 }}%</span>
+                    <span class="stat-value">{{ $rerataKuis ?? 0 }}%</span>
                     <span class="stat-label">RERATA KUIS</span>
                 </div>
                 <div class="stat-box">
@@ -150,7 +150,12 @@
                 <p class="catatan-desc-label">Berikan detail mendalam mengenai kelebihan dan area yang perlu difokuskan.</p>
                 
                 <div class="catatan-box-view">
-                    <p><em>"Pemahaman dasar mengenai Ransomware sangat baik. Secara keseluruhan, dokumentasi jawaban kuis sangat rapi dan mudah dipahami. Tetap pertahankan kualitas belajarnya!"</em></p>
+                    @if(! empty($evaluasiInstruktur))
+                        <p style="white-space: pre-line;"><em>"{{ $evaluasiInstruktur->catatan }}"</em></p>
+                        <p style="margin-top: 10px; font-size: 11px; opacity: .7;">Diperbarui {{ optional($evaluasiInstruktur->created_at)->format('d M Y, H:i') }}</p>
+                    @else
+                        <p><em>Belum ada catatan dari instruktur.</em></p>
+                    @endif
                 </div>
             </div>
 

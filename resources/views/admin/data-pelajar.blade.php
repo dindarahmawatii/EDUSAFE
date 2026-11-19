@@ -59,7 +59,7 @@
                                 <td><strong style="color: #00288A; font-size: 15px;">{{ $pelajar['rerata_nilai'] }}%</strong></td>
                                 <td><span class="badge-status-green">{{ $pelajar['status'] }}</span></td>
                                 <td style="text-align: center;">
-                                    <a href="{{ route('admin.evaluasi') }}" class="btn-cancel" style="padding: 6px 14px; font-size: 12px; text-decoration: none;">Evaluasi</a>
+                                    <a href="{{ route('admin.evaluasi', $pelajar['id']) }}" class="btn-cancel" style="padding: 6px 14px; font-size: 12px; text-decoration: none;">Evaluasi</a>
                                 </td>
                             </tr>
                         @empty

@@ -38,4 +38,30 @@ class ProgresMembaca extends Model
     {
         return $this->belongsTo(Materi::class, 'idmateri', 'idmateri');
     }
+
+    /**
+     * Judul materi terakhir yang dibaca siswa (progres_membaca.updated_at terbaru).
+     * Mengembalikan null jika belum ada progres atau tabel belum siap.
+     */
+    public static function namaMateriTerakhir(int $userId): ?string
+    {
+        try {
+            $progres = \Illuminate\Support\Facades\DB::table('progres_membaca')
+                ->where('iduser', $userId)
+                ->orderByDesc('updated_at')
+                ->first();
+
+            if (! $progres || ! isset($progres->idmateri)) {
+                return null;
+            }
+
+            $materi = \Illuminate\Support\Facades\DB::table('materi')
+                ->where('idmateri', $progres->idmateri)
+                ->first();
+
+            return $materi->judul ?? $materi->namamateri ?? null;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
 }

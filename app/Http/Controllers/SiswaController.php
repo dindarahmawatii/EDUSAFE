@@ -358,7 +358,7 @@ class SiswaController extends Controller
     {
         $userId = Auth::id() ?? 1;
 
-        $rerataKuis = 88;
+        $rerataKuis = 0;
         $materiSelesai = 0;
         $totalMateri = 6;
         $evaluasiList = collect();
@@ -387,6 +387,15 @@ class SiswaController extends Controller
             // Gunakan nilai bawaan
         }
 
+        $evaluasiInstruktur = null;
+        try {
+            $evaluasiInstruktur = \App\Models\EvaluasiInstruktur::terbaruUntuk((int) $userId);
+        } catch (\Throwable $e) {
+            // Tabel evaluasi_instruktur belum siap (migrasi belum dijalankan)
+        }
+
+        $modulTerakhir = \App\Models\ProgresMembaca::namaMateriTerakhir((int) $userId);
+
         $predikat = 'A';
         if ($rerataKuis < 60) {
             $predikat = 'C';
@@ -396,7 +405,7 @@ class SiswaController extends Controller
             $predikat = 'B+';
         }
 
-        return view('siswa.evaluasi', compact('rerataKuis', 'materiSelesai', 'totalMateri', 'predikat', 'evaluasiList'));
+        return view('siswa.evaluasi', compact('rerataKuis', 'materiSelesai', 'totalMateri', 'predikat', 'evaluasiList', 'evaluasiInstruktur', 'modulTerakhir'));
     }
 
     /**
