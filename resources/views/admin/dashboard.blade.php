@@ -61,7 +61,7 @@
             <div class="stat-card">
                 <div class="stat-card-header">
                     <div class="stat-icon">⏱</div>
-                    <span class="stat-trend active-tag">Aktif</span>
+                    <span class="stat-trend active-tag">Active</span>
                 </div>
                 <div>
                     <p class="stat-label">Kuis Berjalan</p>
@@ -105,7 +105,7 @@
         <div class="admin-card">
             <div class="admin-card-header flex-between">
                 <h3 class="admin-card-title">Materi </h3>
-                <button class="btn-primary-admin" onclick="toggleModal(true)">+ Tambah Materi</button>
+                <button class="btn-primary-admin" data-action="materi-open">+ Tambah Materi</button>
             </div>
             
             <div class="table-responsive">
@@ -154,13 +154,13 @@
                     <h3 class="admin-card-title">Kelola Soal Kuis & Kunci Jawaban</h3>
                     <p style="color: #64748B; font-size: 13px; margin: 4px 0 0 0;">Atur kuis per materi pembelajaran beserta kunci jawaban dan pembahasannya.</p>
                 </div>
-                <button class="btn-primary-admin" onclick="bukaModalTambahKuis()">+ Tambah Soal Kuis</button>
+                <button class="btn-primary-admin" data-action="kuis-open">+ Tambah Soal Kuis</button>
             </div>
 
             <!-- Filter Dropdown Pilih Materi -->
             <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px; background: #F8FAFC; padding: 12px 16px; border-radius: 8px; border: 1px solid #E2E8F0;">
                 <label style="font-size: 13px; font-weight: 700; color: #334155;">Filter Berdasarkan Materi:</label>
-                <select id="filterMateri" onchange="renderTabelKuis()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #CBD5E1; background: #FFF; font-size: 13px; min-width: 250px;">
+                <select id="filterMateri" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #CBD5E1; background: #FFF; font-size: 13px; min-width: 250px;">
                     <option value="SEMUA">-- Semua Materi Pembelajaran --</option>
                     @foreach($materiList as $materi)
                         <option value="{{ $materi->getKey() }}">{{ $materi->judul ?? $materi->namamateri }}</option>
@@ -195,7 +195,7 @@
     <div class="modal-card">
         <div class="modal-header">
             <h3>Tambah Modul Materi Baru</h3>
-            <span class="modal-close" onclick="toggleModal(false)">&times;</span>
+            <span class="modal-close" data-action="materi-close">&times;</span>
         </div>
 
         <form action="{{ route('admin.materi.store') }}" method="POST">
@@ -223,7 +223,7 @@
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="toggleModal(false)">Batal</button>
+                <button type="button" class="btn-cancel" data-action="materi-close">Batal</button>
                 <button type="submit" class="btn-submit">Simpan Materi</button>
             </div>
         </form>
@@ -238,10 +238,10 @@
                 <h3 id="modalKuisTitle">Tambah Soal Kuis</h3>
                 <span id="labelNomorSoal" style="font-size: 12px; color: #00288A; font-weight: 700;">Input Soal Ke-1</span>
             </div>
-            <span class="modal-close" onclick="toggleModalKuis(false)">&times;</span>
+            <span class="modal-close" data-action="kuis-close">&times;</span>
         </div>
 
-        <form id="formKuis" action="{{ route('admin.kuis.storeAjax') }}" method="POST" onsubmit="handleFormKuisSubmit(event)">
+        <form id="formKuis" action="{{ route('admin.kuis.storeAjax') }}" method="POST">
             @csrf
             <input type="hidden" id="editIndex" value="-1">
             
@@ -287,10 +287,10 @@
 
             <!-- Actions: Tombol Tambah (+) & Tombol Selesai -->
             <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E2E8F0; padding-top: 15px;">
-                <button type="button" class="btn-cancel" onclick="toggleModalKuis(false)">Batal</button>
+                <button type="button" class="btn-cancel" data-action="kuis-close">Batal</button>
                 <div style="display: flex; gap: 10px;">
                     <!-- Tombol + untuk lanjut soal berikutnya -->
-                    <button type="button" id="btnTambahBeruntun" class="btn-primary-admin" style="background: #10B981;" onclick="simpanDanLanjut()">+ Soal Berikutnya</button>
+                    <button type="button" id="btnTambahBeruntun" class="btn-primary-admin" style="background: #10B981;" data-action="kuis-lanjut">+ Soal Berikutnya</button>
                     <!-- Tombol Simpan Akhir -->
                     <button type="submit" class="btn-submit" id="btnSimpanText">Selesai & Simpan Kuis</button>
                 </div>
@@ -299,7 +299,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     // Data tabel diambil dari database; tidak ada lagi array soal hardcode.
     let daftarSoalKuis = @json($soalKuis ?? []);
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
@@ -457,6 +457,27 @@
         } catch (error) { alert(error.message); }
     }
 
-    document.addEventListener('DOMContentLoaded', renderTabelKuis);
+    // Pengganti atribut onclick/onchange/onsubmit inline (kompatibel dengan CSP)
+    document.addEventListener('DOMContentLoaded', function () {
+        renderTabelKuis();
+
+        const aksi = {
+            'materi-open': () => toggleModal(true),
+            'materi-close': () => toggleModal(false),
+            'kuis-open': () => bukaModalTambahKuis(),
+            'kuis-close': () => toggleModalKuis(false),
+            'kuis-lanjut': () => simpanDanLanjut(),
+        };
+        document.addEventListener('click', function (e) {
+            const el = e.target.closest('[data-action]');
+            if (el && aksi[el.dataset.action]) aksi[el.dataset.action]();
+        });
+
+        const filter = document.getElementById('filterMateri');
+        if (filter) filter.addEventListener('change', renderTabelKuis);
+
+        const formKuis = document.getElementById('formKuis');
+        if (formKuis) formKuis.addEventListener('submit', handleFormKuisSubmit);
+    });
 </script>
 @endsection

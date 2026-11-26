@@ -72,7 +72,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/evaluasi/{id?}', [AdminController::class, 'evaluasi'])->whereNumber('id')->name('evaluasi');
     Route::post('/evaluasi/{id}', [AdminController::class, 'storeEvaluasi'])->whereNumber('id')->name('evaluasi.store');
 
-    Route::view('/laporan', 'admin.laporan')->name('laporan');
+    Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
     Route::get('/rekap', [AdminController::class, 'rekap'])->name('rekap');
 
     Route::post('/materi/store', [AdminController::class, 'storeMateri'])->name('materi.store');

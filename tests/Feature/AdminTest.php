@@ -5,11 +5,52 @@ namespace Tests\Feature;
 use App\Models\Materi;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class AdminTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! Schema::hasTable('mengerjakan_kuis')) {
+            Schema::create('mengerjakan_kuis', function ($table) {
+                $table->id('idmengerjakan');
+                $table->unsignedBigInteger('iduser')->nullable();
+                $table->unsignedBigInteger('idkuis')->nullable();
+                $table->unsignedBigInteger('idmateri')->nullable();
+                $table->text('jawabanKuis')->nullable();
+                $table->integer('nilai_akhir')->nullable();
+                $table->string('status_kelulusan')->nullable();
+                $table->timestamp('tanggal_pengerjaan')->nullable();
+                $table->timestamps();
+            });
+        }
+
+        if (! Schema::hasTable('progres_membaca')) {
+            Schema::create('progres_membaca', function ($table) {
+                $table->id('idprogres');
+                $table->unsignedBigInteger('iduser')->nullable();
+                $table->unsignedBigInteger('idmateri')->nullable();
+                $table->boolean('status_selesai')->default(0);
+                $table->timestamps();
+            });
+        }
+
+        if (! Schema::hasTable('kuis')) {
+            Schema::create('kuis', function ($table) {
+                $table->id('idkuis');
+                $table->string('namakuis')->nullable();
+                $table->text('deskripsi')->nullable();
+                $table->integer('waktuPengerjaan')->default(15);
+                $table->timestamps();
+            });
+        }
+    }
 
     private function createAdmin(): User
     {
@@ -206,5 +247,55 @@ class AdminTest extends TestCase
         $response->assertSee('Tingkat Penyelesaian per Modul');
         $response->assertSee('Riwayat Penyelesaian Modul Semua Siswa');
         $response->assertSee('Analisis Forensic Digital');
+    }
+
+    public function test_admin_laporan_page_displays_actual_data_from_database(): void
+    {
+        $admin = $this->createAdmin();
+
+        $siswa = User::factory()->create([
+            'name' => 'Doni Siswa',
+            'role' => 'user',
+        ]);
+
+        $materi = Materi::create([
+            'namamateri' => 'Network Traffic Analysis',
+            'kategori' => 'Network Security',
+            'deskripsi' => 'Pengenalan analisa paket jaringan Wireshark.',
+            'konten' => 'Penjelasan analisis data TCP/IP.',
+        ]);
+
+        // Simpan pengerjaan kuis lulus
+        DB::table('mengerjakan_kuis')->insert([
+            'iduser' => $siswa->id,
+            'idkuis' => 1,
+            'idmateri' => $materi->getKey(),
+            'jawabanKuis' => json_encode(['1' => 'A']),
+            'nilai_akhir' => 90,
+            'status_kelulusan' => 'LULUS',
+            'tanggal_pengerjaan' => now(),
+        ]);
+
+        // Catat progres membaca modul selesai
+        DB::table('progres_membaca')->insert([
+            'iduser' => $siswa->id,
+            'idmateri' => $materi->getKey(),
+            'status_selesai' => 1,
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.laporan'));
+
+        $response->assertOk();
+        $response->assertSee('Laporan Rekapitulasi Edukasi');
+        $response->assertSee('TINGKAT KELULUSAN KUIS');
+        $response->assertSee('100%');
+        $response->assertSee('Total 1 dari 1 kuis berhasil lulus');
+        $response->assertSee('MODUL PALING POPULER');
+        $response->assertSee('Network Traffic Analysis');
+        $response->assertSee('RERATA WAKTU PENYELESAIAN');
+        $response->assertSee('30.0 Menit');
+        $response->assertSee('Rekapitulasi Aktivitas Bulanan');
+        $response->assertSee('Sedang Berjalan');
     }
 }

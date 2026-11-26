@@ -19,17 +19,17 @@
             <div class="admin-stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 30px;">
                 <div class="stat-card">
                     <p class="stat-label">TINGKAT KELULUSAN KUIS</p>
-                    <h3 class="stat-value" style="color: #00288A;">94.2%</h3>
-                    <span class="stat-trend">+3.1% dibanding bulan lalu</span>
+                    <h3 class="stat-value" style="color: #00288A;">{{ $tingkatKelulusan }}%</h3>
+                    <span class="stat-trend">{{ $kelulusanSubtext }}</span>
                 </div>
                 <div class="stat-card">
                     <p class="stat-label">MODUL PALING POPULER</p>
-                    <h3 class="stat-value" style="font-size: 18px; color: #00288A;">Malware Analysis</h3>
-                    <span class="stat-label">Total 420 penyelesaian</span>
+                    <h3 class="stat-value" style="font-size: 18px; color: #00288A;">{{ $modulPopulerNama }}</h3>
+                    <span class="stat-label">{{ $modulPopulerSubtext }}</span>
                 </div>
                 <div class="stat-card">
                     <p class="stat-label">RERATA WAKTU PENYELESAIAN</p>
-                    <h3 class="stat-value" style="color: #00288A;">18.5 Menit</h3>
+                    <h3 class="stat-value" style="color: #00288A;">{{ $rerataWaktu }}</h3>
                     <span class="stat-label">Per modul edukasi</span>
                 </div>
             </div>
@@ -41,27 +41,28 @@
                     <thead>
                         <tr>
                             <th>Bulan</th>
-                            <th>Siswa Aktif</th>
+                            <th>Total Siswa</th>
                             <th>Kuis Diselesaikan</th>
                             <th>Rata-rata Nilai</th>
                             <th>Status Laporan</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>September 2026</strong></td>
-                            <td>1,284 Siswa</td>
-                            <td>3,420 Kali</td>
-                            <td><strong>78.5</strong></td>
-                            <td><span class="badge-status-blue">Berjalan</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Agustus 2026</strong></td>
-                            <td>1,150 Siswa</td>
-                            <td>2,980 Kali</td>
-                            <td><strong>80.2</strong></td>
-                            <td><span class="badge-status-green">Selesai & Arsip</span></td>
-                        </tr>
+                        @forelse($rekapBulanan as $item)
+                            <tr>
+                                <td><strong>{{ $item->nama_bulan }}</strong></td>
+                                <td>{{ $item->total_user }} Siswa</td>
+                                <td>{{ $item->total_kuis }} Kali</td>
+                                <td><strong>{{ $item->rerata_nilai !== null ? $item->rerata_nilai : '-' }}</strong></td>
+                                <td><span class="{{ $item->status_class }}">{{ $item->status_label }}</span></td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #64748B; padding: 24px;">
+                                    Belum ada data aktivitas bulanan yang tercatat.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

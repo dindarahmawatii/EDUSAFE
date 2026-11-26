@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="toolbar-actions">
-                    <button class="btn-toolbar" onclick="window.print()">
+                    <button class="btn-toolbar" id="btn-ekspor-rekap">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         Ekspor Rekap
                     </button>
@@ -139,8 +139,11 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     document.addEventListener('DOMContentLoaded', function () {
+        const btnEkspor = document.getElementById('btn-ekspor-rekap');
+        if (btnEkspor) btnEkspor.addEventListener('click', function () { window.print(); });
+
         const searchInput = document.getElementById('rekapSearch');
         const rows = document.querySelectorAll('.rekap-row');
         const entriesInfo = document.getElementById('entriesInfo');

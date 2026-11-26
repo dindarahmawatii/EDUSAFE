@@ -58,7 +58,7 @@
                     <h3 class="admin-card-title">Tingkat Penyelesaian per Modul</h3>
                     <p style="color: #64748B; font-size: 13px; margin: 4px 0 0 0;">Persentase penyelesaian modul materi oleh mahasiswa/siswa terdaftar.</p>
                 </div>
-                <button class="btn-cancel" style="padding: 8px 16px; font-size: 13px;" onclick="window.print()">📥 Cetak Rekap</button>
+                <button class="btn-cancel" style="padding: 8px 16px; font-size: 13px;" id="btn-cetak-rekap">📥 Cetak Rekap</button>
             </div>
 
             <div class="table-responsive">
@@ -157,3 +157,12 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script nonce="{{ $cspNonce ?? '' }}">
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('btn-cetak-rekap');
+        if (btn) btn.addEventListener('click', function () { window.print(); });
+    });
+</script>
+@endpush

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - EduSafe</title>
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Inter (dihosting sendiri, tanpa CDN eksternal) -->
+    <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
     
     <!-- CSS Base, Components, & Halaman Auth -->
     <link rel="stylesheet" href="{{ asset('css/base/variables.css') }}?v={{ time() }}">
@@ -52,18 +52,18 @@
                 </div>
 
                 <button type="submit" id="btn-submit" class="btn btn-dark btn-block">
-                    <span id="btn-text">Daftar</span>
+                    <span id="btn-text">Sign In</span>
                 </button>
             </form>
 
             <div class="auth-links">
-                <a href="{{ route('forgot-password') }}" class="link-forgot">Lupa Password?</a>
+                <a href="{{ route('forgot-password') }}" class="link-forgot">Forgot password?</a>
                 <a href="{{ route('register') }}" class="link-register">Buat Akun</a>
             </div>
         </div>
     </main>
 
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         const form       = document.getElementById('login-form');
         const emailInput = document.getElementById('email');
         const passInput  = document.getElementById('password');

@@ -4,7 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/siswa/kuis.css') }}?v={{ time() }}">
-    <style>
+    <style nonce="{{ $cspNonce ?? '' }}">
         .question-card-item { display: none; }
         .question-card-item.active-step { display: block; }
         .btn-prev:disabled, .btn-prev[disabled] { opacity: 0.4; cursor: not-allowed; }
@@ -72,7 +72,7 @@
                             <div class="quiz-card-footer">
                                 <button type="button" 
                                         class="btn-prev" 
-                                        onclick="navigasiSoal({{ $num - 1 }})" 
+                                        data-nav="{{ $num - 1 }}" 
                                         {{ $num === 1 ? 'disabled style=opacity:0.4;cursor:not-allowed;' : '' }}>
                                     &larr; Sebelumnya
                                 </button>
@@ -81,14 +81,14 @@
                                     <button type="button" 
                                             class="btn-ragu" 
                                             id="btn-ragu-{{ $num }}"
-                                            onclick="toggleRagu({{ $num }})">
+                                            data-ragu="{{ $num }}">
                                         Ragu-ragu
                                     </button>
                                     
                                     @if($num < count($daftarSoal))
                                         <button type="button" 
                                                 class="btn-next" 
-                                                onclick="navigasiSoal({{ $num + 1 }})">
+                                                data-nav="{{ $num + 1 }}">
                                             Simpan & Lanjut &rarr;
                                         </button>
                                     @else
@@ -112,7 +112,7 @@
                         @foreach($daftarSoal as $num => $soal)
                             <div class="num-box {{ $num === 1 ? 'current' : '' }}" 
                                  id="num-nav-{{ $num }}"
-                                 onclick="navigasiSoal({{ $num }})">
+                                 data-nav="{{ $num }}">
                                 {{ $num }}
                             </div>
                         @endforeach
@@ -154,10 +154,23 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     const totalSoal = {{ count($daftarSoal) }};
     let currentStep = 1;
     const raguState = {};
+
+    // Pengganti atribut onclick inline (kompatibel dengan CSP)
+    document.addEventListener('click', function (e) {
+        const navEl = e.target.closest('[data-nav]');
+        if (navEl) {
+            navigasiSoal(parseInt(navEl.dataset.nav, 10));
+            return;
+        }
+        const raguEl = e.target.closest('[data-ragu]');
+        if (raguEl) {
+            toggleRagu(parseInt(raguEl.dataset.ragu, 10));
+        }
+    });
 
     function updateStats() {
         let answered = 0;
